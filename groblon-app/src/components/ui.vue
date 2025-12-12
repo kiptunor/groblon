@@ -1,44 +1,66 @@
 <template>
-  <!--<v-container class="fill-height" max-width=1200>-->
-    <!--<h1>Stuff....</h1>-->
+  <v-container class="fill-height position-absolute left-0">
+    <v-card class="pa-2 fill-height" max-width="300">
+      <v-list density="proeminent">
+        <!--<v-list-subheader>REPORTS</v-list-subheader>-->
 
-   <v-card rounded="0" theme="dark" flat class="fill-height">
-     <v-window v-model="onboarding">
-       <v-window-item v-for="n in length":key="`card-${n}`":value="n">
-        <v-card class="d-flex justify-center align-center fill-height">
-          <span class="text-h2">
-            Card {{ n }}
-          </span>
-        </v-card>
-      </v-window-item>
-    </v-window>
+        <v-list-group value="Notes" color="primary">
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              color="primary"
+              class="mb-2"
+              v-bind="props"
+              prepend-icon="mdi-sticker-text"
+              rounded="xl"
+              title="Notes"></v-list-item>
+          </template>
 
-    <v-card-actions class="justify-space-between">
-      <v-btn icon="mdi-chevron-left" variant="plain" @click="prev"></v-btn>
-      <v-item-group v-model="onboarding" class="text-center" mandatory>
-        <v-item v-for="n in length":key="`btn-${n}`" v-slot="{ isSelected, toggle }":value="n">
-          <v-btn :variant="isSelected ? 'outlined' : 'text'" icon="mdi-record" @click="toggle"></v-btn>
-        </v-item>
-      </v-item-group>
-      <v-btn icon="mdi-chevron-right" variant="plain" @click="next"></v-btn>
-    </v-card-actions>
-  </v-card>
-  <!--</v-container>-->
+          <v-list-item
+            rounded="xl"
+            v-for="([title, icon], i) in noteExamples"
+            :key="i"
+            class="mb-2"
+            :prepend-icon="icon"
+            :title="title"
+            :value="title"></v-list-item>
+        </v-list-group>
+
+        <!--Media Access-->
+        <v-list-item
+          class="mb-2"
+          v-for="(item, i) in items"
+          :key="i"
+          :value="item"
+          color="primary"
+          rounded="xl">
+          <template v-slot:prepend>
+            <v-icon :icon="item.icon"></v-icon>
+          </template>
+          <v-list-item-title v-text="item.text"></v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-card>
+  </v-container>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 
-  import { ref } from 'vue'
+const items = [
+  //{ text: 'Notes', icon: 'mdi-sticker-text' },
+  { text: 'Media Access', icon: 'mdi-multimedia' },
+  { text: 'Settings', icon: 'mdi-cog' },
+]
 
-  // Text editor media viewer paging
-  const length = ref(3)
-  const onboarding = ref(1)
 
-  function next () {
-    onboarding.value = onboarding.value + 1 > length.value ? 1 : onboarding.value + 1
-  }
-  function prev () {
-    onboarding.value = onboarding.value - 1 <= 0 ? length.value : onboarding.value - 1
-  }
+const open = ref(['Notes'])
+
+// Just some placeholder for now
+const noteExamples = [
+  ['Some Note idk', 'mdi-text-box'],
+  ['links', 'mdi-text-box'],
+  ['Names', 'mdi-text-box'],
+  ['samples', 'mdi-text-box'],
+]
 
 </script>
