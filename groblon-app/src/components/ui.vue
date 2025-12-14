@@ -1,8 +1,9 @@
+<!--The main sidebar menu-->
 <template>
   <v-container class="fill-height position-absolute left-0">
     <v-card class="pa-2 fill-height" max-width="300">
-      <v-list v-model:active="active" v-model:opened="opened" v-model:selected="selected" density="proeminent">
-        <v-list-group color="primary" value="Notes">
+      <v-list v-model:active="activeItems" v-model:opened="opened" v-model:selected="selected" density="proeminent">
+        <v-list-group color="primary" value="notes">
           <template #activator="{ props }">
             <v-list-item
               class="mb-2"
@@ -13,6 +14,7 @@
               title="Notes"></v-list-item>
           </template>
 
+          <!-- Render the notes -->
           <v-list-item
             v-for="([title, icon], i) in noteExamples"
             :key="i"
@@ -20,23 +22,31 @@
             :prepend-icon="icon"
             rounded="xl"
             :title="title"
-            :value="title"
-          ></v-list-item>
+            :value="title"></v-list-item>
         </v-list-group>
 
-        <!--Media Access-->
         <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
           class="mb-2"
           color="primary"
+          label="Media Access"
           rounded="xl"
-          :value="item"
-        >
+          value="media-access">
           <template #prepend>
-            <v-icon :icon="item.icon"></v-icon>
+            <v-icon icon="mdi-multimedia" />
           </template>
-          <v-list-item-title v-text="item.text"></v-list-item-title>
+          <v-list-item-title>Media Access</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item
+          class="mb-2"
+          color="primary"
+          label="Settings"
+          rounded="xl"
+          value="settings">
+          <template #prepend>
+            <v-icon icon="mdi-cog" />
+          </template>
+          <v-list-item-title>Settings</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-card>
@@ -49,41 +59,34 @@
 </script>
 
 <script setup lang="ts">
-import { watch, shallowRef } from 'vue'
+  import { shallowRef, watch } from 'vue'
 
-console.log("UI Component loaded!");
-
-const items = [
-  { text: 'Media Access', value: 'media-acc', icon: 'mdi-multimedia' },
-  { text: 'Settings', value: 'Settings', icon: 'mdi-cog' },
-]
-
-// Just some placeholder for now
-const noteExamples = [
-  ['Some Note idk', 'mdi-text-box'],
-  ['links', 'mdi-text-box'],
-  ['Names', 'mdi-text-box'],
-  ['samples', 'mdi-text-box'],
-]
+  console.log('UI Component loaded!')
 
 
+  /*
+  - - - - Sidebar Functionality - - - -
+  */
 
-const opened = shallowRef<string[]>([])
-const active = shallowRef<string[]>([])
-const selected = shallowRef<string[]>([])
+  // Just some placeholder for now
+  const noteExamples = [
+    ['Some Note idk', 'mdi-text-box'],
+    ['links', 'mdi-text-box'],
+    ['Names', 'mdi-text-box'],
+    ['samples', 'mdi-text-box'],
+  ]
 
-//watch(opened, (val) => {
-//  //console.log('Opened groups:', val)
-//  console.log('Is Notes open?', val.includes('Notes'))
-//  //console.log('Is Media Access clicked?', val.includes('Media Access'))
-//})
-//
-//watch(active, (val) => {
-//  console.log('Active items:', val)
-//})
+  const opened = shallowRef<string[]>([])
+  const selected = shallowRef<string[]>([])
 
-watch(selected, (val) => {
-  console.log('Selected items:', val.includes('Media Access'))
-})
+  watch(opened, (val) => {
+    console.log('Is Notes open?', val.includes('notes'))
+  })
 
+  // Didn't know this is the way to handle "click event" XDDD
+  watch(selected, (val) => {
+    console.log('Selected items:', val)
+    console.log('Is Media Access selected?', val.includes('media-access'))
+    console.log('Is Settings selected?', val.includes('settings'))
+  })
 </script>
