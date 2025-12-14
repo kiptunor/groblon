@@ -11,7 +11,8 @@
               v-bind="props"
               prepend-icon="mdi-sticker-text"
               rounded="xl"
-              title="Notes"></v-list-item>
+              title="Notes"
+            ></v-list-item>
           </template>
 
           <!-- Render the notes -->
@@ -22,7 +23,8 @@
             :prepend-icon="icon"
             rounded="xl"
             :title="title"
-            :value="title"></v-list-item>
+            :value="title"
+          ></v-list-item>
         </v-list-group>
 
         <v-list-item
@@ -30,7 +32,8 @@
           color="primary"
           label="Media Access"
           rounded="xl"
-          value="media-access">
+          value="media-access"
+        >
           <template #prepend>
             <v-icon icon="mdi-multimedia" />
           </template>
@@ -42,7 +45,8 @@
           color="primary"
           label="Settings"
           rounded="xl"
-          value="settings">
+          value="settings"
+        >
           <template #prepend>
             <v-icon icon="mdi-cog" />
           </template>
@@ -59,7 +63,7 @@
 </script>
 
 <script setup lang="ts">
-  import { shallowRef, watch } from 'vue'
+  import { computed, shallowRef, watch } from 'vue'
 
   console.log('UI Component loaded!')
 
@@ -79,14 +83,37 @@
   const opened = shallowRef<string[]>([])
   const selected = shallowRef<string[]>([])
 
-  watch(opened, (val) => {
-    console.log('Is Notes open?', val.includes('notes'))
+
+  // Handling sidebar items independently
+  const isNotesActive = computed(() =>
+    opened.value.includes('notes')
+  )
+
+  const isMediaAccessActive = computed(() =>
+    selected.value.includes('media-access')
+  )
+
+  const isSettingsActive = computed(() =>
+    selected.value.includes('settings')
+  )
+
+  // Check the state of each list item
+  // Todo: Render the required components (Text editor for notes, image / video / audio player, app settings)
+  watch(isMediaAccessActive, val => {
+    if (val) {
+      console.log('Media Access')
+    }
   })
 
-  // Didn't know this is the way to handle "click event" XDDD
-  watch(selected, (val) => {
-    console.log('Selected items:', val)
-    console.log('Is Media Access selected?', val.includes('media-access'))
-    console.log('Is Settings selected?', val.includes('settings'))
+  watch(isSettingsActive, val => {
+    if (val) {
+      console.log('Settings')
+    }
+  })
+
+  watch(isNotesActive, val => {
+    if (val) {
+      console.log('Notes')
+    }
   })
 </script>
