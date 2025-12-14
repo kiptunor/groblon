@@ -15,15 +15,15 @@
             ></v-list-item>
           </template>
 
-          <!-- Render the notes -->
+          <!-- Render the notes list-->
           <v-list-item
-            v-for="([title, icon], i) in noteExamples"
-            :key="i"
+            v-for="item in noteExamples"
+            :key="item.value"
             class="mb-2"
-            :prepend-icon="icon"
+            :prepend-icon="item.icon"
             rounded="xl"
-            :title="title"
-            :value="title"
+            :title="item.title"
+            :value="item.value"
           ></v-list-item>
         </v-list-group>
 
@@ -68,17 +68,25 @@
   console.log('UI Component loaded!')
 
 
+
+  type NoteItem = {
+    title: string
+    icon: string
+    value: string
+  }
+
+
   /*
   - - - - Sidebar Functionality - - - -
   */
 
-  // Just some placeholder for now
-  const noteExamples = [
-    ['Some Note idk', 'mdi-text-box'],
-    ['links', 'mdi-text-box'],
-    ['Names', 'mdi-text-box'],
-    ['samples', 'mdi-text-box'],
-  ]
+  const titles = ['Some Note idk', 'links', 'Names', 'samples']
+
+  const noteExamples: NoteItem[] = titles.map(title => ({
+    title,
+    icon: 'mdi-text-box',
+    value: title.toLowerCase().replace(/\s+/g, '-'),
+  }))
 
   const opened = shallowRef<string[]>([])
   const selected = shallowRef<string[]>([])
