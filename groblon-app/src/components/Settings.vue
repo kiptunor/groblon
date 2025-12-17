@@ -1,7 +1,8 @@
 <template>
+  <UI ref="uiRef" />
   <div class="text-center pa-4">
     <v-dialog
-      v-model="dialog"
+      v-model="settingsDialog"
       fullscreen
       transition="dialog-bottom-transition"
     >
@@ -9,7 +10,7 @@
         <v-toolbar>
           <v-btn
             icon="mdi-close"
-            @click="dialog = false"
+            @click="closeSettingsDialog()"
           ></v-btn>
 
           <v-toolbar-title>Settings</v-toolbar-title>
@@ -18,7 +19,7 @@
             <v-btn
               text="Save"
               variant="text"
-              @click="dialog = false"
+              @click="saveSettings()"
             ></v-btn>
           </v-toolbar-items>
         </v-toolbar>
@@ -84,10 +85,26 @@
 </template>
 
 <script setup>
-  import { shallowRef } from 'vue'
+  import { shallowRef, ref } from 'vue'
+  import { useUI } from '@/stores/ui'
+  // import UI from './ui.vue'
 
-  const dialog = shallowRef(true)
+  const settingsDialog = shallowRef(true)
   const notifications = shallowRef(false)
   const sound = shallowRef(true)
   const widgets = shallowRef(false)
+
+  const ui = useUI()
+
+  function closeSettingsDialog() {
+    settingsDialog.value = false
+    ui.clearSelection() // works everywhere
+  }
+
+  function saveSettings() {
+    // Save settings logic here
+    settingsDialog.value = false
+    ui.clearSelection()
+    console.log('Settings saved')
+  }
 </script>

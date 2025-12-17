@@ -5,7 +5,7 @@
         <v-row class="fill-height" no-gutters>
           <v-col cols="auto">
             <v-card class="pa-2 fill-height" max-width="300">
-              <v-list v-model:active="activeItems" v-model:opened="opened" v-model:selected="selected" density="proeminent">
+              <v-list v-model:opened="ui.opened" v-model:selected="ui.selected" selectable density="proeminent">
                 <v-list-group color="primary" value="notes">
                   <template #activator="{ props }">
                     <v-list-item
@@ -49,6 +49,7 @@
                   label="Settings"
                   rounded="xl"
                   value="settings"
+                  @click="settingsDialog = true"
                 >
                   <template #prepend>
                     <v-icon icon="mdi-cog" />
@@ -65,10 +66,13 @@
       </v-container>
     </v-layout>
   </v-app>
+  <!--<Settings v-model:dialog="settingsDialog" />-->
 </template>
 
 <script setup lang="ts">
   import { computed, ref, shallowRef, watch } from 'vue'
+  // import { defineStore } from 'pinia'
+  import { useUI } from '@/stores/ui'
   import MediaAccess from './MediaAccess.vue'
   import Settings from './Settings.vue'
   import TextEditor from './TextEditor.vue'
@@ -82,6 +86,8 @@
     icon: string
     value: string
   }
+  
+  const ui = useUI()
 
   /*
   - - - - Sidebar Functionality - - - -
@@ -96,20 +102,10 @@
   }))
 
   const opened = shallowRef<string[]>([])
-  const selected = shallowRef<string[]>([])
-
 
   // Handling sidebar items independently
   const isNotesActive = computed(() =>
     opened.value.includes('notes')
-  )
-
-  const isMediaAccessActive = computed(() =>
-    selected.value.includes('media-access')
-  )
-
-  const isSettingsActive = computed(() =>
-    selected.value.includes('settings')
   )
 
   // Check the state of each list item
@@ -118,47 +114,26 @@
     if (val) {
       console.log('Notes')
     }
-    // activeView.value = val ? 'notes' : null
   })
-
-  watch(isMediaAccessActive, val => {
-    if (val) {
-      console.log('Media Access')
-    }
-  })
-
-  watch(isSettingsActive, val => {
-    if (val) {
-      console.log('Settings')
-    }
-  })
-
 
   /*
   - - - - Components Rendering - - - -
   */
 
-
   const currentComponent = computed(() => {
-    /*
-    switch (activeView.value) {
-      case 'notes':
-        return TextEditor
-      case 'media':
-        return MediaPanel
-      default:
-        return null
-    }
-    */
-    if (opened.value.includes('notes')) {
+    if (ui.opened.includes('notes'))
       return TextEditor
-    }
-    if (selected.value.includes('media-access')) {
+    if (ui.selected.includes('media-access'))
       return MediaAccess
-    }
-    if (selected.value.includes('settings')) {
+    if (ui.selected.includes('settings'))
       return Settings
-    }
     return null
+  })
+
+  watch(opened, (newOpened, oldOpened) => {
+    // if a group was just opened
+    if (newOpened.length > oldOpened.length) {
+      selected.value = []
+    }
   })
 </script>
