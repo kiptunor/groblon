@@ -66,16 +66,17 @@
       </v-container>
     </v-layout>
   </v-app>
-  <!--<Settings v-model:dialog="settingsDialog" />-->
 </template>
 
 <script setup lang="ts">
-  import { computed, ref, shallowRef, watch } from 'vue'
+  import { computed, ref, shallowRef, watch, onMounted } from 'vue'
   // import { defineStore } from 'pinia'
   import { useUI } from '@/stores/ui'
   import MediaAccess from './MediaAccess.vue'
   import Settings from './Settings.vue'
   import TextEditor from './TextEditor.vue'
+
+  import { server } from '../api/server'
 
   console.log('UI Component loaded!')
 
@@ -86,7 +87,7 @@
     icon: string
     value: string
   }
-  
+
   const ui = useUI()
 
   /*
@@ -100,21 +101,6 @@
     icon: 'mdi-text-box',
     value: title.toLowerCase().replace(/\s+/g, '-'),
   }))
-
-  const opened = shallowRef<string[]>([])
-
-  // Handling sidebar items independently
-  const isNotesActive = computed(() =>
-    opened.value.includes('notes')
-  )
-
-  // Check the state of each list item
-  // Todo: Render the required components (Text editor for notes, image / video / audio player, app settings)
-  watch(isNotesActive, val => {
-    if (val) {
-      console.log('Notes')
-    }
-  })
 
   /*
   - - - - Components Rendering - - - -
@@ -130,10 +116,15 @@
     return null
   })
 
-  watch(opened, (newOpened, oldOpened) => {
-    // if a group was just opened
-    if (newOpened.length > oldOpened.length) {
-      selected.value = []
-    }
+
+  const message = ref<string>('')
+
+
+  onMounted(async () => {
+    message.value = await server.check_default()
+    console.log('Server Resp:', message.value?.msg)
   })
+
+
+
 </script>

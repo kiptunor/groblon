@@ -1,5 +1,4 @@
 <template>
-  <!--<HelloWorld />-->
   <ui/>
 </template>
 

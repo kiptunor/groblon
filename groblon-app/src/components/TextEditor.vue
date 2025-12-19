@@ -1,88 +1,97 @@
 <template>
-  <v-card>
-    <v-toolbar>
-      <v-btn
-        class="mr-3"
-        icon="mdi-dots-vertical"
-        size="small"
-        variant="elevated"
+  <v-main>
+    <v-card>
+      <v-toolbar>
+        <v-div class="mr-4"></v-div>
+        <v-btn
+          class="mr-3"
+          icon="mdi-dots-vertical"
+          size="small"
+          variant="elevated"
+        >
+          <v-icon></v-icon>
+          <v-speed-dial activator="parent" :location="dialLocation" open-on-hover>
+            <v-btn
+              v-for="(item, i) in dialActionsReversed"
+              :key="i"
+              v-tooltip="{ location: tooltipLocation, text: item.tooltip }"
+              :color="item.color"
+              :icon="item.icon"
+              @click="onDialAction(item, i)"
+            ></v-btn>
+          </v-speed-dial>
+        </v-btn>
+
+        <v-btn
+          v-tooltip:bottom="'Search text'"
+          class="ml-3"
+          icon="mdi-magnify"
+        ></v-btn>
+      </v-toolbar>
+    </v-card>
+    <v-textarea class="mt-2" label="text" rows="35" variant="solo-filled"></v-textarea>
+
+    <div class="pa-4 text-center">
+      <v-dialog
+        v-model="noteDialog"
+        max-width="600"
       >
-        <v-icon></v-icon>
-        <v-speed-dial activator="parent" :location="dialLocation" open-on-hover>
-          <v-btn
-            v-for="(item, i) in dialActionsReversed"
-            :key="i"
-            v-tooltip="{ location: tooltipLocation, text: item.tooltip }"
-            :color="item.color"
-            :icon="item.icon"
-            @click="onDialAction(item, i)"
-          ></v-btn>
-        </v-speed-dial>
-      </v-btn>
+        <v-card
+          prepend-icon="mdi-text-box"
+          title="Create new note"
+        >
+          <v-card-text>
+            <v-text-field
+              v-model="noteName"
+              label="Name"
+              required
+              variant="solo-filled"
+            ></v-text-field>
 
-      <v-btn
-        v-tooltip:bottom="'Search text'"
-        class="ml-3"
-        icon="mdi-magnify"
-      ></v-btn>
-    </v-toolbar>
-  </v-card>
-  <v-textarea class="mt-2" label="text" rows="35" variant="solo-filled"></v-textarea>
-  
-  <div class="pa-4 text-center">
-    <v-dialog
-      v-model="noteDialog"
-      max-width="600"
-    >
-      <v-card
-        prepend-icon="mdi-text-box"
-        title="Create new note"
-      >
-        <v-card-text>
-          <v-text-field
-            label="Name"
-            required
-          ></v-text-field>
+            <v-checkbox
+              v-model="defaultFileExt"
+              color="primary"
+              hide-details
+              label="Append default file extension"
+              value="auto-extension"
+            ></v-checkbox>
 
-          <v-checkbox
-            color="primary"
-            hide-details
-            label="Append default file extension"
-            value="auto-extension"
-          ></v-checkbox>
+            <!--<small class="text-caption text-medium-emphasis">*indicates required field</small>-->
+          </v-card-text>
 
-          <!--<small class="text-caption text-medium-emphasis">*indicates required field</small>-->
-        </v-card-text>
+          <v-divider></v-divider>
 
-        <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
+            <v-btn
+              text="Cancel"
+              variant="plain"
+              @click="noteDialog = false"
+            ></v-btn>
 
-          <v-btn
-            text="Cancel"
-            variant="plain"
-            @click="noteDialog = false"
-          ></v-btn>
-
-          <v-btn
-            color="primary"
-            text="Save"
-            variant="tonal"
-            @click="noteDialog = false, createNote()"
-          ></v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+            <v-btn
+              color="primary"
+              text="Create"
+              variant="tonal"
+              @click="noteDialog = false, createNote()"
+            ></v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
+  </v-main>
 </template>
 
 <script setup lang="ts">
-  import { shallowRef } from 'vue'
+  import { shallowRef, ref } from 'vue'
+  import { server } from '../api/server'
 
   console.log('Text Editor Activated')
 
   const noteDialog = shallowRef(false)
+  const noteName = ref('')
+  const defaultFileExt = ref(false)
 
   /*
   - - - - Toolbar functionality - - - -
@@ -102,6 +111,7 @@
 
     if (item.icon === 'mdi-plus') {
       console.log('Add note action')
+      noteName.value = ''
       noteDialog.value = true
     }
     if (item.icon === 'mdi-minus') {
@@ -114,6 +124,12 @@
     /*
     Sends http request to create a new note as an empty text file
     */
+
+    // Why can't js do this easier
+    if (defaultFileExt.value && !noteName.value.endsWith('.txt')) {
+      noteName.value += '.txt'
+    }
     console.log('Creating note...')
+    server.create_note(noteName.value)
   }
 </script>

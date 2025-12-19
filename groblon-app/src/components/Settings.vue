@@ -85,9 +85,8 @@
 </template>
 
 <script setup>
-  import { shallowRef, ref } from 'vue'
+  import { ref, shallowRef } from 'vue'
   import { useUI } from '@/stores/ui'
-  // import UI from './ui.vue'
 
   const settingsDialog = shallowRef(true)
   const notifications = shallowRef(false)
