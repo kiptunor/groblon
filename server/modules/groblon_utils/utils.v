@@ -20,3 +20,9 @@ pub fn create_new_note(n TextNote)
 {
   // Todo
 }
+
+
+pub fn get_home_dir() string
+{
+  // Todo
+}

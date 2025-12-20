@@ -4,7 +4,17 @@ import net.http
 import json
 
 
-
+/*
+Note content data (JSON)
+{
+  "name": "Filename.txt"
+  "contents": "All\nThe text that has been written into a file"
+},
+{
+  "name": "Saved Links.txt"
+  "contents": "Links"
+}
+*/
 
 struct HttpHandler {}
 
@@ -17,6 +27,7 @@ struct MsgResponse
 {
   status string
   msg    string
+  data   string
 }
 
 
@@ -53,12 +64,15 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
     {
       '/check_server'
       {
+        /*
+        Required for checking for the official server
+        */
         resp := MsgResponse
         {
           status: 'ok'
           msg: 'Grobly! :D'
         }
-        println("Request received")
+        println("Server checked")
         return http.Response
         {
           status_code: 200
@@ -68,6 +82,13 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
       }
       '/create_note' 
       {
+        /*
+        Create a new note (creating a new empty file)
+        Todo: Return error if:
+        - Name is empty
+        - Note already exists
+        - It fails to create the file
+        */
         data := json.decode(MsgRequest, req.data) or
         {
           return http.Response
@@ -93,6 +114,9 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
       }
       '/delete_note' 
       {
+        /*
+        Delete / remove an exisisting note (deleting a file)
+        */
         data := json.decode(MsgRequest, req.data) or
         {
           return http.Response
@@ -107,6 +131,158 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         resp := MsgResponse{
           status: 'ok'
           msg: 'Note deleted: $data.msg'
+        }
+        return http.Response
+        {
+          status_code: 200
+          body: json.encode(resp)
+          header: cors_headers()
+        }
+      }
+      '/get_note_contents'
+      {
+        /*
+        Return JSON object array of each note existing in /home/<user>/Documents/MyNotes
+        */
+        
+        println("Request: $req")
+        
+        resp := MsgResponse
+        {
+          status: 'ok'
+          msg: 'All file contents passed'
+          // data: 'Json struct' // Todo
+        }
+        
+        return http.Response
+        {
+          status_code: 200
+          body: json.encode(resp)
+          header: cors_headers()
+        }
+      }
+      '/write_note'
+      {
+        /*
+        Write / overwrite an entire file with the received contents
+        */
+        data := json.decode(MsgRequest, req.data) or
+        {
+          return http.Response
+          {
+            status_code: 400
+            body: '{"status":"error","msg":"Invalid JSON"}'
+            header: cors_headers()
+          }
+        }
+        
+        println('Writing note: $data.msg')
+        resp := MsgResponse
+        {
+          status: 'ok'
+          msg: 'Received content: $data.msg'
+        }
+        return http.Response
+        {
+          status_code: 200
+          body: json.encode(resp)
+          header: cors_headers()
+        }
+      }
+      '/append_note'
+      {
+        /*
+        Append the new text lines to an existing text file
+        */
+        
+        data := json.decode(MsgRequest, req.data) or
+        {
+          return http.Response
+          {
+            status_code: 400
+            body: '{"status":"error","msg":"Invalid JSON"}'
+            header: cors_headers()
+          }
+        }
+        
+        println('Appending note: $data.msg')
+        resp := MsgResponse
+        {
+          status: 'ok'
+          msg: 'Received content: $data.msg'
+        }
+        return http.Response
+        {
+          status_code: 200
+          body: json.encode(resp)
+          header: cors_headers()
+        }
+      }
+      '/refresh_note_list'
+      {
+        /*
+        Refresh note list if new text file has been created manually
+        */
+        
+        println("Request: $req")
+        
+        resp := MsgResponse
+        {
+          status: 'ok'
+          msg: 'Refreshed note list'
+          // data: 'Json struct' // Todo
+        }
+        
+        return http.Response
+        {
+          status_code: 200
+          body: json.encode(resp)
+          header: cors_headers()
+        }
+      }
+      '/get_server_settings'
+      {
+        /*
+        Get the server settings (Locally stored)
+        */
+        
+        println("Request: $req")
+        
+        resp := MsgResponse
+        {
+          status: 'ok'
+          msg: 'Passing server settings'
+          // data: 'Json struct' // Todo
+        }
+        
+        return http.Response
+        {
+          status_code: 200
+          body: json.encode(resp)
+          header: cors_headers()
+        }
+      }
+      '/save_server_settings'
+      {
+        /*
+        Save server settings
+        */
+        
+        data := json.decode(MsgRequest, req.data) or
+        {
+          return http.Response
+          {
+            status_code: 400
+            body: '{"status":"error","msg":"Invalid JSON"}'
+            header: cors_headers()
+          }
+        }
+        
+        println('Saving settings: $data.msg')
+        resp := MsgResponse
+        {
+          status: 'ok'
+          msg: 'Received content: $data.msg'
         }
         return http.Response
         {

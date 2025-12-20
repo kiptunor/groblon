@@ -43,10 +43,21 @@ export class GroblonServer {
       return null
     }
   }
-  
+
   async create_note(name: string): Promise<PostResponse> {
     try {
       const res = await this.api.post<PostResponse>('/create_note', { msg: name })
+      return res.data
+    }
+    catch (err) {
+      console.error('Request failed:', err)
+      return null
+    }
+  }
+
+  async delete_note(name: string): Promise<PostResponse> {
+    try {
+      const res = await this.api.post<PostResponse>('/delete_note', { msg: name })
       return res.data
     }
     catch (err) {
@@ -58,4 +69,4 @@ export class GroblonServer {
 
 export const server = new GroblonServer(server_url)
 // export const server = new ServerAPI();
-export type { AddRequest, AddResponse, PostResponse }
+export type { PostResponse }

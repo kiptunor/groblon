@@ -45,6 +45,7 @@
               v-model="noteName"
               label="Name"
               required
+              :rules="noteNameRule"
               variant="solo-filled"
             ></v-text-field>
 
@@ -72,9 +73,10 @@
 
             <v-btn
               color="primary"
+              :disabled="!noteName"
               text="Create"
               variant="tonal"
-              @click="noteDialog = false, createNote()"
+              @click="createNote()"
             ></v-btn>
           </v-card-actions>
         </v-card>
@@ -99,8 +101,9 @@
 
   // The order is reversed for some reason which I think it's very funny
   const dialActions = [
-    { color: 'primary', icon: 'mdi-plus', tooltip: 'Add Note' },
-    { color: 'primary', icon: 'mdi-minus', tooltip: 'Remove Selected Note' },
+    { color: 'orange', icon: 'mdi-plus', tooltip: 'Add Note' },
+    { color: 'red', icon: 'mdi-trash-can', tooltip: 'Remove Selected Note' },
+    { color: 'primary', icon: 'mdi-refresh', tooltip: 'Refresh note list' },
   ]
 
   // Tried to fix that issue somehow XDDDD
@@ -114,16 +117,24 @@
       noteName.value = ''
       noteDialog.value = true
     }
-    if (item.icon === 'mdi-minus') {
+    if (item.icon === 'mdi-trash-can') {
       // Todo: Add warning dialog
       console.log('Remove note action')
+      server.delete_note('< Temp Name >')
+    }
+    if (item.icon === 'mdi-refresh') {
+      console.log('Refresh note list action')
+      // server.refresh_note_list()
     }
   }
+
 
   function createNote() {
     /*
     Sends http request to create a new note as an empty text file
     */
+
+    noteDialog.value = false
 
     // Why can't js do this easier
     if (defaultFileExt.value && !noteName.value.endsWith('.txt')) {
