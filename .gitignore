@@ -1,0 +1,52 @@
+# - - - - Groblon App - - - -
+
+.DS_Store
+groblon-app/node_modules
+groblon-app/dist
+
+# local env files
+groblon-app/.env
+groblon-app/.env.local
+groblon-app/.env.*.local
+
+# Log files
+groblon-app/npm-debug.log*
+groblon-app/yarn-debug.log*
+groblon-app/yarn-error.log*
+groblon-app/pnpm-debug.log*
+
+# Editor directories and files
+groblon-app/.idea
+groblon-app/.vscode
+groblon-app/*.suo
+groblon-app/*.ntvs*
+groblon-app/*.njsproj
+groblon-app/*.sln
+groblon-app/*.sw?
+
+# - - - - Server - - - -
+
+# Binaries for programs and plugins
+server/main
+server/server
+server/*.exe
+server/*.exe~
+server/*.so
+server/*.dylib
+server/*.dll
+
+# Ignore binary output folders
+server/bin/
+
+# Ignore common editor/system specific metadata
+server/.DS_Store
+server/.idea/
+server/.vscode/
+server/*.iml
+
+# ENV
+server/.env
+
+# vweb and database
+server/*.db
+server/*.js
