@@ -2,6 +2,8 @@ module server_api
 
 import net.http
 import json
+import log
+import groblon_utils
 
 
 /*
@@ -15,6 +17,12 @@ Note content data (JSON)
   "contents": "Links"
 }
 */
+
+
+//http_log := log.Log{}
+__global (
+    http_log &log.ThreadSafeLog
+)
 
 struct HttpHandler {}
 
@@ -48,6 +56,10 @@ fn cors_headers() http.Header
 
 pub fn(mut h HttpHandler) handle(req http.Request) http.Response
 {
+  
+  http_log = log.new_thread_safe_log()
+  http_log.set_level(.info)
+      
   // Handle CORS preflight
   if req.method == .options
   {
@@ -72,7 +84,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           status: 'ok'
           msg: 'Grobly! :D'
         }
-        println("Server checked")
+        http_log.info("Server check requested")
         return http.Response
         {
           status_code: 200
@@ -91,15 +103,17 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         */
         data := json.decode(MsgRequest, req.data) or
         {
+          http_log.error('failed to \x1b[38;5;45m/create_note\x1b[0m. Invalid JSON received')
           return http.Response
           {
             status_code: 400
-            body: '{"status":"error","msg":"Invalid JSON"}'
+            body: '{"status":"error","msg":"Invalid JSON while attempting to create a note"}'
             header: cors_headers()
           }
         }
 
-        println('Creating note: $data.msg')
+        http_log.info('Creating note: $data.msg')
+        groblon_utils.create_new_note(groblon_utils.get_default_note_dir() + "/" + data.msg)
         resp := MsgResponse
         {
           status: 'ok'
@@ -119,6 +133,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         */
         data := json.decode(MsgRequest, req.data) or
         {
+          http_log.error('failed to \x1b[38;5;45m/delete_note\x1b[0m. Invalid JSON received')
           return http.Response
           {
             status_code: 400
@@ -168,15 +183,16 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         */
         data := json.decode(MsgRequest, req.data) or
         {
+          http_log.error('failed to \x1b[38;5;45m/write_note\x1b[0m. Invalid JSON received')
           return http.Response
           {
             status_code: 400
-            body: '{"status":"error","msg":"Invalid JSON"}'
+            body: '{"status":"error","msg":"Invalid JSON while writing note"}'
             header: cors_headers()
           }
         }
         
-        println('Writing note: $data.msg')
+        http_log.info('Writing note: $data.msg')
         resp := MsgResponse
         {
           status: 'ok'
@@ -197,15 +213,16 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         
         data := json.decode(MsgRequest, req.data) or
         {
+          http_log.error('failed to \x1b[38;5;45m/append_note\x1b[0m. Invalid JSON received')
           return http.Response
           {
             status_code: 400
-            body: '{"status":"error","msg":"Invalid JSON"}'
+            body: '{"status":"error","msg":"Invalid JSON while appending note"}'
             header: cors_headers()
           }
         }
         
-        println('Appending note: $data.msg')
+        http_log.info('Appending note: $data.msg')
         resp := MsgResponse
         {
           status: 'ok'
@@ -270,15 +287,16 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         
         data := json.decode(MsgRequest, req.data) or
         {
+          http_log.error('failed to /save_server_settings. Invalid JSON received')
           return http.Response
           {
             status_code: 400
-            body: '{"status":"error","msg":"Invalid JSON"}'
+            body: '{"status":"error","msg":"Invalid JSON while saving server settings"}'
             header: cors_headers()
           }
         }
         
-        println('Saving settings: $data.msg')
+        http_log.info('Saving settings: $data.msg')
         resp := MsgResponse
         {
           status: 'ok'
@@ -293,6 +311,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
       }
       else
       {
+        http_log.error('Endpoint not found')
         return http.Response
         {
           status_code: 404
@@ -303,6 +322,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
     }
   }
 
+  http_log.error('Invalid request method. Use POST method instead')
   return http.Response
   {
     status_code: 405
