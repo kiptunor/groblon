@@ -2,6 +2,10 @@
   <v-main>
     <v-card>
       <v-toolbar>
+        <!--
+        To add:
+        - Note properties (File properties)
+        -->
         <v-div class="mr-4"></v-div>
         <v-btn
           class="mr-3"

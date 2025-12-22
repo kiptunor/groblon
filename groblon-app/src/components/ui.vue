@@ -20,14 +20,15 @@
 
                   <!-- Render the notes list-->
                   <v-list-item
-                    v-for="item in noteExamples"
+                    v-for="item in notes_test"
                     :key="item.value"
                     class="mb-2"
                     :prepend-icon="item.icon"
                     rounded="xl"
-                    :title="item.title"
                     :value="item.value"
-                  ></v-list-item>
+                  >
+                    <v-list-item-title>{{ item.f_path_name.split('/').pop() }}</v-list-item-title>
+                  </v-list-item>
                 </v-list-group>
 
                 <v-list-item
@@ -69,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref, shallowRef, watch, onMounted } from 'vue'
+  import { computed, onMounted, ref, shallowRef, watch } from 'vue'
   // import { defineStore } from 'pinia'
   import { useUI } from '@/stores/ui'
   import MediaAccess from './MediaAccess.vue'
@@ -91,19 +92,35 @@
   const ui = useUI()
 
   /*
-  - - - - Sidebar Functionality - - - -
+  - - - - Server Interaction - - - -
   */
+  const message = ref<string>('')
+  // const notes_test = ref()
+  const notes_test = ref<Note[]>([])
+  const titles = ref<NoteItem[]>([])
 
-  const titles = ['Some Note idk', 'links', 'Names', 'samples']
 
-  const noteExamples: NoteItem[] = titles.map(title => ({
-    title,
-    icon: 'mdi-text-box',
-    value: title.toLowerCase().replace(/\s+/g, '-'),
-  }))
+
+  onMounted(async () => {
+    message.value = await server.check_default()
+    console.log('Server Resp:', message.value?.msg)
+
+    const res = await server.get_notes()
+    notes_test.value = res.data
+
+    // console.log('get_notes raw:', notes_test.value)
+    // console.log('is array?', Array.isArray(notes_test.value))
+
+    titles.value = notes_test.value.map(note => ({
+      title: note.f_path_name.split('/').pop() ?? note.f_path_name,
+      icon: 'mdi-text-box',
+      value: note.f_path_name,
+    }))
+  })
+
 
   /*
-  - - - - Components Rendering - - - -
+  - - - - Sidebar Functionality - - - -
   */
 
   const currentComponent = computed(() => {
@@ -115,16 +132,5 @@
       return Settings
     return null
   })
-
-
-  const message = ref<string>('')
-
-
-  onMounted(async () => {
-    message.value = await server.check_default()
-    console.log('Server Resp:', message.value?.msg)
-  })
-
-
 
 </script>

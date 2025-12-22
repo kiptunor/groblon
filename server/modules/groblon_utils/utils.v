@@ -6,37 +6,6 @@ import log
 
 
 
-enum NoteType as u8
-{
-  plain    // Simple text note
-  markdown // Markdown formatted text note
-  table     // CSV formatted table note
-}
-
-struct TextNote
-{
-  f_path_name string @[required] // The file path and the name
-  //mut color := Color
-  text_content string
-}
-
-
-
-pub fn create_new_note(n string)
-{
-  // Necessary checking since os.write_file can't check if a file exist before creating it
-  if !os.exists(n)
-  {
-    os.write_file(n, '') or {
-      log.error('Note Creation Error: $err')
-    }
-  }
-  else
-  {
-    log.error('Note Creation Error: ${n} already exists')
-  }
-}
-
 
 pub fn get_default_note_dir() string
 {

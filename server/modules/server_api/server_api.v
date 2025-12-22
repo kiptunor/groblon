@@ -4,6 +4,7 @@ import net.http
 import json
 import log
 import groblon_utils
+import groblon_core
 
 
 /*
@@ -35,7 +36,31 @@ struct MsgResponse
 {
   status string
   msg    string
-  data   string
+  data   []groblon_core.TextNote
+}
+
+pub struct NoteJson
+{
+  pub:
+    filename string
+    content  string
+}
+
+
+fn notes_to_json(notes []groblon_core.TextNote) string
+{
+  mut out := []NoteJson{}
+
+  for note in notes
+  {
+    out << NoteJson
+    {
+      filename: note.f_path_name
+      content:  note.text_content
+    }
+  }
+
+  return json.encode(out)
 }
 
 
@@ -113,7 +138,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         }
 
         http_log.info('Creating note: $data.msg')
-        groblon_utils.create_new_note(groblon_utils.get_default_note_dir() + "/" + data.msg)
+        groblon_core.create_new_note(groblon_utils.get_default_note_dir() + "/" + data.msg)
         resp := MsgResponse
         {
           status: 'ok'
@@ -160,13 +185,30 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         Return JSON object array of each note existing in /home/<user>/Documents/MyNotes
         */
         
-        println("Request: $req")
+        // println("Request: $req")
+        
+        http_log.info("Received request: \x1b[38;5;45m/get_note_contents\x1b[0m")
+        
+        // Use default note directory for now
+        notes := groblon_core.get_notes(groblon_utils.get_default_note_dir()) or
+        {
+          http_log.error('failed to \x1b[38;5;45m/get_note_contents\x1b[0m. $err')
+          
+          return http.Response
+          {
+            status_code: 400
+            body: '{"status":"error","msg":"Failed to read notes directory", "errorDescription":"$err"}'
+            header: cors_headers()
+          }
+        }
+        
+        //notes_to_json(notes []TextNote)
         
         resp := MsgResponse
         {
           status: 'ok'
-          msg: 'All file contents passed'
-          // data: 'Json struct' // Todo
+          msg: 'Operation successful'
+          data: notes
         }
         
         return http.Response

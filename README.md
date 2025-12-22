@@ -1,5 +1,5 @@
 # Groblon
-A web application and server that allows saving notes in a single place and access them from anywhere I need at anytime
+A remote access journal
 
 
 

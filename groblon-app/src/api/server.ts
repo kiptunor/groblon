@@ -20,6 +20,11 @@ interface PostResponse {
   echo: string
 }
 
+type Note = {
+  filename: string
+  content: string
+}
+
 
 export class GroblonServer {
   private api: AxiosInstance
@@ -65,8 +70,19 @@ export class GroblonServer {
       return null
     }
   }
+
+  async get_notes(): Promise<PostResponse> {
+    try {
+      const res = await this.api.post<PostResponse>('/get_note_contents', {})
+      return res.data
+    }
+    catch (err) {
+      console.error('Request failed:', err)
+      return null
+    }
+  }
 }
 
 export const server = new GroblonServer(server_url)
 // export const server = new ServerAPI();
-export type { PostResponse }
+export type { Note, PostResponse }

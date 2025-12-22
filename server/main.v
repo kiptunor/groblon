@@ -3,6 +3,7 @@ module main
 
 import server_api
 import groblon_utils
+import groblon_core
 
 
 
@@ -13,4 +14,15 @@ fn main()
   // println(groblon_utils.get_config_dir())
   
   // groblon_utils.setup()
+  
+  /*
+  notes := groblon_core.get_notes('/home/kiptunor/Documents/My Notes') or {
+    eprintln(err)
+    return
+  }
+  
+  for note in notes {
+    println("${note.f_path_name}")
+  }
+  */
 }
