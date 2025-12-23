@@ -33,7 +33,15 @@
         ></v-btn>
       </v-toolbar>
     </v-card>
-    <v-textarea class="mt-2" label="text" rows="35" variant="solo-filled"></v-textarea>
+    <v-textarea
+      v-model="text_editor_ctrl.textarea_string"
+      class="mt-2"
+      label="text"
+      rows="35"
+      variant="solo-filled"
+      @blur="isTextareaFocused = false"
+      @focus="isTextareaFocused = true"
+    ></v-textarea>
 
     <div class="pa-4 text-center">
       <v-dialog
@@ -60,8 +68,6 @@
               label="Append default file extension"
               value="auto-extension"
             ></v-checkbox>
-
-            <!--<small class="text-caption text-medium-emphasis">*indicates required field</small>-->
           </v-card-text>
 
           <v-divider></v-divider>
@@ -90,14 +96,19 @@
 </template>
 
 <script setup lang="ts">
-  import { shallowRef, ref } from 'vue'
+  import { computed, ref, shallowRef, watch } from 'vue'
   import { server } from '../api/server'
+  import { textEditorControl } from '@/stores/TextEditor'
+  import { useUI } from '@/stores/ui'
 
   console.log('Text Editor Activated')
 
   const noteDialog = shallowRef(false)
   const noteName = ref('')
   const defaultFileExt = ref(false)
+  
+  const text_editor_ctrl = textEditorControl()
+  const ui = useUI()
 
   /*
   - - - - Toolbar functionality - - - -
@@ -147,4 +158,47 @@
     console.log('Creating note...')
     server.create_note(noteName.value)
   }
+  
+  const textarea_string = ref('')
+  let timeout: number | undefined
+  const isTextareaFocused = ref(false)
+
+  const current_file_path = ref<string | null>(null)
+
+  watch(
+    () => ui.selected,
+    (newVal) => {
+      if (!newVal || newVal.length === 0) {
+        return
+      }
+      current_file_path.value = newVal[0]
+      // console.log('Current file path:', current_file_path.value)
+    },
+    { immediate: true }
+  )
+
+
+  watch(
+    () => text_editor_ctrl.textarea_string,
+    (newValue) => {
+      if (!isTextareaFocused.value) return
+
+      clearTimeout(timeout)
+
+      timeout = window.setTimeout(() => {
+        // console.log('Saving action:', current_file_path.value)
+        server.save_note({
+          filename: current_file_path.value,
+          content: newValue
+        })
+      }, 1000)
+    }
+  )
+
+  watch(
+    () => text_editor_ctrl.textarea_string,
+    (newVal) => {
+      textarea_string.value = newVal
+    }
+  )
 </script>

@@ -32,6 +32,12 @@ struct MsgRequest
   msg string
 }
 
+struct SaveNoteRequest
+{
+  msg string
+  current_note groblon_core.TextNote
+}
+
 struct MsgResponse
 {
   status string
@@ -221,7 +227,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         /*
         Write / overwrite an entire file with the received contents
         */
-        data := json.decode(MsgRequest, req.data) or
+        data := json.decode(SaveNoteRequest, req.data) or
         {
           http_log.error('failed to \x1b[38;5;45m/write_note\x1b[0m. Invalid JSON received')
           return http.Response
@@ -232,7 +238,18 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           }
         }
         
-        http_log.info('Writing note: $data.msg')
+        // http_log.info('Writing note: $data')
+        
+        http_log.info('Received request: \x1b[38;5;45m/write_note\x1b[0m')
+        
+        note := groblon_core.TextNote
+        {
+          f_path_name: data.current_note.f_path_name
+          text_content: data.current_note.text_content
+        }
+        
+        groblon_core.save_note(note)
+        
         resp := MsgResponse
         {
           status: 'ok'

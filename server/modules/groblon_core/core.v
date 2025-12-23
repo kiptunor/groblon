@@ -52,7 +52,7 @@ pub fn get_notes(dir_path string) ![]TextNote
         notes << TextNote
         {
           f_path_name: full_path
-          text_content: '' // Todo: Read the file content
+          text_content: os.read_file(full_path) or { '' } // Todo: Read the file content
         }
       }
     }
@@ -62,7 +62,11 @@ pub fn get_notes(dir_path string) ![]TextNote
 
 pub fn save_note(note TextNote)
 {
-  //Todo
+  os.write_file(note.f_path_name, note.text_content) or
+  {
+    log.error('save_note() failed: $err')
+    return
+  }
 }
 
 pub fn delete_note(note string)

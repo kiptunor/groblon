@@ -81,6 +81,25 @@ export class GroblonServer {
       return null
     }
   }
+  
+  async save_note(note: Note): Promise<PostResponse> {
+    try {
+      const res = await this.api.post<PostResponse>('/write_note',
+        {
+          msg: 'From Groblon webapp', // I think this is optional dosen't seem to be that useful lol
+          current_note:
+          {
+            f_path_name: note.filename,
+            text_content: note.content
+          }
+        })
+      return res.data
+    }
+    catch (err) {
+      console.error('Request failed:', err)
+      return null
+    }
+  }
 }
 
 export const server = new GroblonServer(server_url)

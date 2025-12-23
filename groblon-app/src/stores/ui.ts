@@ -17,6 +17,7 @@ export const useUI = defineStore('ui', {
       this.opened = this.opened.filter(n => n !== name)
     },
     deselectItem(item: string) {
+      if (this.selected.length <= 1) return
       this.selected = this.selected.filter(v => v !== item)
     },
   },

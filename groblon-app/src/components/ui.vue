@@ -25,7 +25,7 @@
                     class="mb-2"
                     :prepend-icon="item.icon"
                     rounded="xl"
-                    :value="item.value"
+                    :value="item.f_path_name"
                   >
                     <v-list-item-title>{{ item.f_path_name.split('/').pop() }}</v-list-item-title>
                   </v-list-item>
@@ -73,6 +73,7 @@
   import { computed, onMounted, ref, shallowRef, watch } from 'vue'
   // import { defineStore } from 'pinia'
   import { useUI } from '@/stores/ui'
+  import { textEditorControl } from '@/stores/TextEditor'
   import MediaAccess from './MediaAccess.vue'
   import Settings from './Settings.vue'
   import TextEditor from './TextEditor.vue'
@@ -82,6 +83,11 @@
   console.log('UI Component loaded!')
 
 
+  interface Note {
+    f_path_name: string
+    text_content: string
+  }
+
 
   type NoteItem = {
     title: string
@@ -90,12 +96,12 @@
   }
 
   const ui = useUI()
+  const text_editor_ctrl = textEditorControl()
 
   /*
   - - - - Server Interaction - - - -
   */
   const message = ref<string>('')
-  // const notes_test = ref()
   const notes_test = ref<Note[]>([])
   const titles = ref<NoteItem[]>([])
 
@@ -114,10 +120,23 @@
     titles.value = notes_test.value.map(note => ({
       title: note.f_path_name.split('/').pop() ?? note.f_path_name,
       icon: 'mdi-text-box',
-      value: note.f_path_name,
+      // value: note.f_path_name,
     }))
   })
 
+  const selectedNotePath = computed(() => ui.selected[0] ?? null)
+
+  const selectedNote = computed(() => {
+    if (!selectedNotePath.value) return null
+    return notes_test.value.find(
+      n => n.f_path_name === selectedNotePath.value
+    ) ?? null
+  })
+
+  watch(selectedNote, (note) => {
+    if (!note) return
+    text_editor_ctrl.pushText(note)
+  })
 
   /*
   - - - - Sidebar Functionality - - - -

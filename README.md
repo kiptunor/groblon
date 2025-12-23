@@ -16,6 +16,7 @@ Current feature plans:
         - [ ] Text search
         - [ ] Text save
         - [ ] Markdown display / formatting
+    - [ ] Mark Favorite Notes
     - [ ] Note creation
     - [ ] Note deletion
     - [ ] Note content retrieval (In progress)
