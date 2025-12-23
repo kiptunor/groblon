@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import { server } from '../api/server'
 
 // Better handling of the Media Access and Settings list items
 export const useUI = defineStore('ui', {
@@ -21,4 +23,32 @@ export const useUI = defineStore('ui', {
       this.selected = this.selected.filter(v => v !== item)
     },
   },
+})
+
+
+
+export const useNotesStore = defineStore('notes', () => {
+  // reactive array for notes
+  const notes = ref<Note[]>([])
+  const loading = ref(false)
+
+  // fetch notes from server
+  async function fetchNotes() {
+    loading.value = true
+    try {
+      const res = await server.get_notes()
+      // assuming res.data is the array of notes
+      notes.value = res.data
+    } catch (err) {
+      console.error('Failed to fetch notes:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return {
+    notes,
+    loading,
+    fetchNotes,
+  }
 })

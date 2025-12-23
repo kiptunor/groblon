@@ -72,7 +72,7 @@
 <script setup lang="ts">
   import { computed, onMounted, ref, shallowRef, watch } from 'vue'
   // import { defineStore } from 'pinia'
-  import { useUI } from '@/stores/ui'
+  import { useUI, useNotesStore } from '@/stores/ui'
   import { textEditorControl } from '@/stores/TextEditor'
   import MediaAccess from './MediaAccess.vue'
   import Settings from './Settings.vue'
@@ -97,6 +97,7 @@
 
   const ui = useUI()
   const text_editor_ctrl = textEditorControl()
+  const notesStore = useNotesStore()
 
   /*
   - - - - Server Interaction - - - -
@@ -111,26 +112,32 @@
     message.value = await server.check_default()
     console.log('Server Resp:', message.value?.msg)
 
-    const res = await server.get_notes()
-    notes_test.value = res.data
-
-    // console.log('get_notes raw:', notes_test.value)
-    // console.log('is array?', Array.isArray(notes_test.value))
-
-    titles.value = notes_test.value.map(note => ({
-      title: note.f_path_name.split('/').pop() ?? note.f_path_name,
-      icon: 'mdi-text-box',
-      // value: note.f_path_name,
-    }))
+    notesStore.fetchNotes()
   })
 
-  const selectedNotePath = computed(() => ui.selected[0] ?? null)
+  watch(
+    () => notesStore.notes,
+    (newNotes) => {
+      if (!newNotes) return
+      notes_test.value = newNotes
+      titles.value = newNotes.map(note => ({
+        title: note.f_path_name.split('/').pop() ?? note.f_path_name,
+        icon: 'mdi-text-box',
+        value: note.f_path_name
+      }))
+    },
+    { immediate: true }
+  )
+
+
+  const selectedNotePath = computed(() => {
+    const val = ui.selected[0]
+    return typeof val === 'string' ? val : null
+  })
 
   const selectedNote = computed(() => {
     if (!selectedNotePath.value) return null
-    return notes_test.value.find(
-      n => n.f_path_name === selectedNotePath.value
-    ) ?? null
+    return notes_test.value.find(n => n.f_path_name === selectedNotePath.value) ?? null
   })
 
   watch(selectedNote, (note) => {

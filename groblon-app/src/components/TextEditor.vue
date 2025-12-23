@@ -99,7 +99,7 @@
   import { computed, ref, shallowRef, watch } from 'vue'
   import { server } from '../api/server'
   import { textEditorControl } from '@/stores/TextEditor'
-  import { useUI } from '@/stores/ui'
+  import { useUI, useNotesStore } from '@/stores/ui'
 
   console.log('Text Editor Activated')
 
@@ -109,6 +109,7 @@
   
   const text_editor_ctrl = textEditorControl()
   const ui = useUI()
+  const notesStore = useNotesStore()
 
   /*
   - - - - Toolbar functionality - - - -
@@ -138,6 +139,7 @@
       server.delete_note('< Temp Name >')
     }
     if (item.icon === 'mdi-refresh') {
+      notesStore.fetchNotes()
       console.log('Refresh note list action')
       // server.refresh_note_list()
     }
@@ -157,6 +159,8 @@
     }
     console.log('Creating note...')
     server.create_note(noteName.value)
+    
+    notesStore.fetchNotes()
   }
   
   const textarea_string = ref('')
