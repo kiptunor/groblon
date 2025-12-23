@@ -11,8 +11,19 @@ And the second reason is to learn new stuff (Web framework and the V programing 
 
 
 Current feature plans:
-[ ] Simple Text editing
-[ ] Media display (Rendering images, videos, audio content)
+- 🔽 Note Management
+    - 🔽 Text editor
+        - [ ] Text search
+        - [ ] Text save
+        - [ ] Markdown display / formatting
+    - [ ] Note creation
+    - [ ] Note deletion
+    - [ ] Note content retrieval (In progress)
+- 🔽 Media Access
+    - [ ] Image / Video / Audio Tiles
+    - [ ] Full display
+    - [ ] Media Information / File information
+    
 
 
 #### This project is under construction

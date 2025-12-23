@@ -59,3 +59,18 @@ pub fn get_notes(dir_path string) ![]TextNote
   
   return notes
 }
+
+pub fn save_note(note TextNote)
+{
+  //Todo
+}
+
+pub fn delete_note(note string)
+{
+  //Todo
+}
+
+pub fn get_note_info(note TextNote)
+{
+  //Todo (Requires a struct)
+}

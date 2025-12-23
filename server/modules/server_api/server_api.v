@@ -202,8 +202,6 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           }
         }
         
-        //notes_to_json(notes []TextNote)
-        
         resp := MsgResponse
         {
           status: 'ok'
