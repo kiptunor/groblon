@@ -69,9 +69,20 @@ pub fn save_note(note TextNote)
   }
 }
 
-pub fn delete_note(note string)
+pub fn delete_note(file_path string)
 {
-  //Todo
+  if os.exists(file_path) && os.is_file(file_path)
+  {
+    os.rm(file_path) or
+    {
+      log.error('delete_note() -> os.rm() failed: $err')
+      return
+    }
+  }
+  else
+  {
+    log.error('delete_note() failed: File does not exist')
+  }
 }
 
 pub fn get_note_info(note TextNote)

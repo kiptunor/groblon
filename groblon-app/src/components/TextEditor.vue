@@ -136,7 +136,8 @@
     if (item.icon === 'mdi-trash-can') {
       // Todo: Add warning dialog
       console.log('Remove note action')
-      server.delete_note('< Temp Name >')
+      server.delete_note(current_file_path.value)
+      notesStore.fetchNotes()
     }
     if (item.icon === 'mdi-refresh') {
       notesStore.fetchNotes()
@@ -159,10 +160,10 @@
     }
     console.log('Creating note...')
     server.create_note(noteName.value)
-    
+
     notesStore.fetchNotes()
   }
-  
+
   const textarea_string = ref('')
   let timeout: number | undefined
   const isTextareaFocused = ref(false)

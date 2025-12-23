@@ -173,7 +173,11 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           }
         }
       
-        println('Deleting note: $data.msg')
+        //println('Deleting note: $data.msg')
+        http_log.info("Received request: \x1b[38;5;45m/delete_note\x1b[0m :: $data.msg")
+        
+        groblon_core.delete_note(data.msg)
+        
         resp := MsgResponse{
           status: 'ok'
           msg: 'Note deleted: $data.msg'
