@@ -14,12 +14,13 @@ Current feature plans:
 - 🔽 Note Management
     - 🔽 Text editor
         - [ ] Text search
-        - [ ] Text save
+        - [X] Text save
         - [ ] Markdown display / formatting
+    - [ ] Link Saver with embed view
     - [ ] Mark Favorite Notes
-    - [ ] Note creation
-    - [ ] Note deletion
-    - [ ] Note content retrieval (In progress)
+    - [X] Note creation
+    - [X] Note deletion
+    - [X] Note content retrieval
 - 🔽 Media Access
     - [ ] Image / Video / Audio Tiles
     - [ ] Full display

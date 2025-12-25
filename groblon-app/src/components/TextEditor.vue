@@ -35,9 +35,9 @@
     </v-card>
     <v-textarea
       v-model="text_editor_ctrl.textarea_string"
-      class="mt-2"
+      class="mt-2 fill-textarea"
       label="text"
-      rows="35"
+      rows="19"
       variant="solo-filled"
       @blur="isTextareaFocused = false"
       @focus="isTextareaFocused = true"

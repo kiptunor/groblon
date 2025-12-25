@@ -13,7 +13,7 @@
                       color="primary"
                       v-bind="props"
                       prepend-icon="mdi-sticker-text"
-                      rounded="xl"
+                      rounded="lg"
                       title="Notes"
                     ></v-list-item>
                   </template>
@@ -24,7 +24,7 @@
                     :key="item.value"
                     class="mb-2"
                     :prepend-icon="item.icon"
-                    rounded="xl"
+                    rounded="lg"
                     :value="item.f_path_name"
                   >
                     <v-list-item-title>{{ item.f_path_name.split('/').pop() }}</v-list-item-title>
@@ -35,7 +35,7 @@
                   class="mb-2"
                   color="primary"
                   label="Media Access"
-                  rounded="xl"
+                  rounded="lg"
                   value="media-access"
                 >
                   <template #prepend>
@@ -48,7 +48,7 @@
                   class="mb-2"
                   color="primary"
                   label="Settings"
-                  rounded="xl"
+                  rounded="lg"
                   value="settings"
                   @click="settingsDialog = true"
                 >

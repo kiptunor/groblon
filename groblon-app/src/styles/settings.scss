@@ -8,3 +8,121 @@
 // @use 'vuetify/settings' with (
 //   $color-pack: false
 // );
+
+// base color: #e65c00
+
+
+@font-face {
+  font-family: 'Sanchez';
+  src: url('/fonts/sanchez-v17-latin-regular.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fredoka';
+  src: url('/fonts/fredoka-v17-latin-regular.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Prosto One';
+  src: url('/fonts/prosto-one-v21-latin-regular.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Telex';
+  src: url('/fonts/telex-v18-latin-regular.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Shanti';
+  src: url('/fonts/shanti-v25-latin-regular.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rye';
+  src: url('/fonts/rye-v17-latin-regular.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+.v-textarea textarea.v-field__input {
+  font-family: 'Sanchez';
+  font-size: 28px;
+}
+.v-textarea textarea--active {
+  background-color: rgba(204, 82, 0, 0.2) !important;
+}
+
+.v-text-field input.v-field__input {
+  font-family: 'Sanchez';
+  font-size: 16px;
+}
+.v-text-field label {
+  font-family: 'Telex';
+  font-size: 16px;
+}
+
+.v-list {
+  font-family: 'Fredoka';
+  font-size: 16px;
+}
+
+.v-card-title {
+  font-family: 'Prosto One';
+  font-size: 24px;
+}
+
+.v-checkbox {
+  font-family: 'Telex';
+  font-size: 16px;
+}
+
+.v-btn {
+  font-family: 'Shanti';
+  font-size: 16px;
+}
+
+.v-tooltip {
+  font-family: 'Rye';
+  font-size: 44px;
+}
+
+//.v-list-item:selected {
+//  // font-family: 'Fredoka';
+//  // font-size: 16px;
+//  color: #e65c00;
+//}
+
+.v-list-item--active {
+  background-color: rgba(230, 92, 0, 1.8) !important;
+  color: white;
+}
+
+.v-list-item:hover {
+  background-color: rgba(204, 82, 0, 0.6) !important;
+  color: white;
+}
+
+.v-list-item-title
+{
+  color: rgba(255, 255, 255, 1.8);
+}
+
+.v-icon {
+  color: rgba(200, 200, 200, 1.8);
+}
