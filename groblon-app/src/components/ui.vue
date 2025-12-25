@@ -80,7 +80,7 @@
 
   import { server } from '../api/server'
 
-  console.log('UI Component loaded!')
+  console.debug('UI Component loaded!')
 
 
   interface Note {
@@ -110,7 +110,7 @@
 
   onMounted(async () => {
     message.value = await server.check_default()
-    console.log('Server Resp:', message.value?.msg)
+    console.debug('Server Resp:', message.value?.msg)
 
     notesStore.fetchNotes()
   })

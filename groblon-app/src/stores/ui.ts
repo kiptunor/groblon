@@ -13,7 +13,8 @@ export const useUI = defineStore('ui', {
       this.selected = []
     },
     openGroup(name: string) {
-      if (!this.opened.includes(name)) this.opened.push(name)
+      if (!this.opened.includes(name))
+        this.opened.push(name)
     },
     closeGroup(name: string) {
       this.opened = this.opened.filter(n => n !== name)

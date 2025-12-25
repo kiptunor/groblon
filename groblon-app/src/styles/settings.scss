@@ -9,7 +9,12 @@
 //   $color-pack: false
 // );
 
-// base color: #e65c00
+
+
+* {
+  user-select: none;
+  -webkit-user-select: none;
+}
 
 
 @font-face {
@@ -64,9 +69,6 @@
   font-family: 'Sanchez';
   font-size: 28px;
 }
-.v-textarea textarea--active {
-  background-color: rgba(204, 82, 0, 0.2) !important;
-}
 
 .v-text-field input.v-field__input {
   font-family: 'Sanchez';
@@ -102,27 +104,6 @@
   font-size: 44px;
 }
 
-//.v-list-item:selected {
-//  // font-family: 'Fredoka';
-//  // font-size: 16px;
-//  color: #e65c00;
-//}
-
-.v-list-item--active {
-  background-color: rgba(230, 92, 0, 1.8) !important;
-  color: white;
-}
-
-.v-list-item:hover {
-  background-color: rgba(204, 82, 0, 0.6) !important;
-  color: white;
-}
-
-.v-list-item-title
-{
-  color: rgba(255, 255, 255, 1.8);
-}
-
-.v-icon {
-  color: rgba(200, 200, 200, 1.8);
+.v-tooltip > .v-overlay__content {
+  background-color: rgb(var(--v-theme-primary));
 }

@@ -7,7 +7,7 @@
       transition="dialog-bottom-transition"
     >
       <v-card>
-        <v-toolbar>
+        <v-toolbar color="primary-light">
           <v-btn
             icon="mdi-close"
             @click="closeSettingsDialog()"

@@ -18,6 +18,7 @@ Current feature plans:
         - [ ] Markdown display / formatting
     - [ ] Link Saver with embed view
     - [ ] Mark Favorite Notes
+    - [ ] Table editing with CSV formatting
     - [X] Note creation
     - [X] Note deletion
     - [X] Note content retrieval

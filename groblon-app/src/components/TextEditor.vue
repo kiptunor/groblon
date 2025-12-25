@@ -1,7 +1,7 @@
 <template>
   <v-main>
     <v-card>
-      <v-toolbar>
+      <v-toolbar color="primary-light">
         <!--
         To add:
         - Note properties (File properties)
@@ -18,7 +18,7 @@
             <v-btn
               v-for="(item, i) in dialActionsReversed"
               :key="i"
-              v-tooltip="{ location: tooltipLocation, text: item.tooltip }"
+              v-tooltip="{ location: tooltipLocation, text: item.tooltip, color: 'primary' }"
               :color="item.color"
               :icon="item.icon"
               @click="onDialAction(item, i)"
@@ -101,7 +101,6 @@
   import { textEditorControl } from '@/stores/TextEditor'
   import { useUI, useNotesStore } from '@/stores/ui'
 
-  console.log('Text Editor Activated')
 
   const noteDialog = shallowRef(false)
   const noteName = ref('')
@@ -126,23 +125,18 @@
   const dialActionsReversed = [...dialActions].reverse()
 
   function onDialAction(item, index) {
-    // console.log('Clicked:', item.tooltip, 'at index', index)
-
     if (item.icon === 'mdi-plus') {
-      console.log('Add note action')
       noteName.value = ''
       noteDialog.value = true
     }
     if (item.icon === 'mdi-trash-can') {
       // Todo: Add warning dialog
-      console.log('Remove note action')
       server.delete_note(current_file_path.value)
       notesStore.fetchNotes()
     }
     if (item.icon === 'mdi-refresh') {
       notesStore.fetchNotes()
-      console.log('Refresh note list action')
-      // server.refresh_note_list()
+      // console.log('Refresh note list action')
     }
   }
 
@@ -158,7 +152,7 @@
     if (defaultFileExt.value && !noteName.value.endsWith('.txt')) {
       noteName.value += '.txt'
     }
-    console.log('Creating note...')
+    // console.log('Creating note...')
     server.create_note(noteName.value)
 
     notesStore.fetchNotes()
