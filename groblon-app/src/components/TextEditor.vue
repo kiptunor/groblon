@@ -26,12 +26,13 @@
           </v-speed-dial>
         </v-btn>
 
-        <!---->
+        <!--
         <v-btn
           v-tooltip:bottom="'Search text'"
           class="ml-3"
           icon="mdi-magnify"
-        ></v-btn>
+        ></v-btn>-->
+        <v-text-field class="mt-6" style="max-width: 300px; width: 100%;" label="Search text" variant="solo-filled"></v-text-field>
         
         <v-btn
           color="grey-500"
@@ -125,8 +126,8 @@
 
   // The order is reversed for some reason which I think it's very funny
   const dialActions = [
-    { color: 'orange', icon: 'mdi-plus', tooltip: 'Add Note' },
-    { color: 'red', icon: 'mdi-trash-can', tooltip: 'Remove Selected Note' },
+    { color: 'info-darken-1', icon: 'mdi-text-box-plus-outline', tooltip: 'Add Note' },
+    { color: 'red', icon: 'mdi-text-box-minus-outline', tooltip: 'Remove Selected Note' },
     { color: 'primary', icon: 'mdi-refresh', tooltip: 'Refresh note list' },
   ]
 
@@ -134,11 +135,11 @@
   const dialActionsReversed = [...dialActions].reverse()
 
   function onDialAction(item, index) {
-    if (item.icon === 'mdi-plus') {
+    if (item.icon === 'mdi-text-box-plus-outline') {
       noteName.value = ''
       noteDialog.value = true
     }
-    if (item.icon === 'mdi-trash-can') {
+    if (item.icon === 'mdi-text-box-minus-outline') {
       // Todo: Add warning dialog
       server.delete_note(current_file_path.value)
       notesStore.fetchNotes()

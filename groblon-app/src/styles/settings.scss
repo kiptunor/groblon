@@ -113,3 +113,13 @@
   flex: 1;
   min-height: 0; /* important for Handsontable */
 }
+
+/* - - - - HOT Theme modification - - - - */
+.ht-theme-horizon-dark {
+  --ht-color-accent-300: #00cccc;
+  --ht-color-accent-400: #009999;
+  --ht-menu-shadow-color: #004d4d;
+  --ht-menu-item-hover-color: #003333;
+  --ht-menu-item-active-color: #004d4d;
+  --ht-primary-button-hover-background-color: #00cccc;
+}
