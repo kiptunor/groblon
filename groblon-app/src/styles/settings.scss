@@ -107,3 +107,9 @@
 .v-tooltip > .v-overlay__content {
   background-color: rgb(var(--v-theme-primary));
 }
+
+.table-container {
+  margin-top: 8px; /* or whatever space you want */
+  flex: 1;
+  min-height: 0; /* important for Handsontable */
+}

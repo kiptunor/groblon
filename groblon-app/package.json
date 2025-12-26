@@ -13,8 +13,10 @@
   },
   "dependencies": {
     "@fontsource/roboto": "5.2.7",
+    "@handsontable/vue3": "^16.2.0",
     "@mdi/font": "7.4.47",
     "axios": "^1.13.2",
+    "handsontable": "^16.2.0",
     "pinia": "^3.0.4",
     "vue": "^3.5.21",
     "vue-router": "^4.5.1",

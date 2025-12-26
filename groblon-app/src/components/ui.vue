@@ -30,6 +30,38 @@
                     <v-list-item-title>{{ item.f_path_name.split('/').pop() }}</v-list-item-title>
                   </v-list-item>
                 </v-list-group>
+                
+                
+                <v-list-group color="primary" value="tables">
+                  <template #activator="{ props }">
+                    <v-list-item
+                      class="mb-2"
+                      color="primary"
+                      v-bind="props"
+                      prepend-icon="mdi-file-table"
+                      rounded="lg"
+                      title="Tables"
+                    ></v-list-item>
+                  </template>
+
+                  <!-- Render a temporary table list-->
+                  <v-list-item
+                    class="mb-2"
+                    prepend-icon="mdi-table-large"
+                    rounded="lg"
+                    value="t1"
+                    title="Table 1"
+                  >
+                  </v-list-item>
+                  <v-list-item
+                    class="mb-2"
+                    prepend-icon="mdi-table-large"
+                    rounded="lg"
+                    value="t2"
+                    title="Table 2"
+                  >
+                  </v-list-item>
+                </v-list-group>
 
                 <v-list-item
                   class="mb-2"
@@ -77,6 +109,7 @@
   import MediaAccess from './MediaAccess.vue'
   import Settings from './Settings.vue'
   import TextEditor from './TextEditor.vue'
+  import TableEditor from './TableEditor.vue'
 
   import { server } from '../api/server'
 
@@ -152,11 +185,13 @@
   const currentComponent = computed(() => {
     if (ui.opened.includes('notes'))
       return TextEditor
+    if (ui.opened.includes('tables'))
+      return TableEditor
     if (ui.selected.includes('media-access'))
       return MediaAccess
     if (ui.selected.includes('settings'))
       return Settings
     return null
   })
-
+  
 </script>

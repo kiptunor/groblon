@@ -26,10 +26,19 @@
           </v-speed-dial>
         </v-btn>
 
+        <!---->
         <v-btn
           v-tooltip:bottom="'Search text'"
           class="ml-3"
           icon="mdi-magnify"
+        ></v-btn>
+        
+        <v-btn
+          color="grey-500"
+          variant="elevated"
+          v-tooltip:bottom="'Note properties'"
+          class="ml-3"
+          icon="mdi-information-slab-box"
         ></v-btn>
       </v-toolbar>
     </v-card>
