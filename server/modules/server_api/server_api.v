@@ -43,6 +43,7 @@ struct MsgResponse
   status string
   msg    string
   data   []groblon_core.TextNote
+  table_data []groblon_core.TableFile
 }
 
 pub struct NoteJson
@@ -144,7 +145,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         }
 
         http_log.info('Creating note: $data.msg')
-        groblon_core.create_new_note(groblon_utils.get_default_note_dir() + "/" + data.msg)
+        groblon_core.create_note(groblon_utils.get_default_note_dir() + "/" + data.msg)
         resp := MsgResponse
         {
           status: 'ok'
@@ -311,6 +312,106 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           // data: 'Json struct' // Todo
         }
         
+        return http.Response
+        {
+          status_code: 200
+          body: json.encode(resp)
+          header: cors_headers()
+        }
+      }
+      '/create_table' 
+      {
+        /*
+        Create a new CSV table
+        */
+        data := json.decode(MsgRequest, req.data) or
+        {
+          http_log.error('failed to \x1b[38;5;45m/create_table\x1b[0m. Invalid JSON received')
+          return http.Response
+          {
+            status_code: 400
+            body: '{"status":"error","msg":"Invalid JSON while attempting to create table"}'
+            header: cors_headers()
+          }
+        }
+
+        http_log.info('Creating table: $data.msg')
+        groblon_core.create_table(groblon_utils.get_default_table_dir() + "/" + data.msg)
+        resp := MsgResponse
+        {
+          status: 'ok'
+          msg: 'Table created: $data.msg'
+        }
+          return http.Response
+          {
+            status_code: 200
+            body: json.encode(resp)
+            header: cors_headers()
+          }
+      }
+      '/get_table_contents'
+      {
+        /*
+        Return JSON object array of each note existing in /home/<user>/Documents/MyNotes
+        */
+        
+        // println("Request: $req")
+        
+        http_log.info("Received request: \x1b[38;5;45m/get_table_contents\x1b[0m")
+        
+        // Use default note directory for now
+        // println("Table files: ${groblon_core.get_tables(groblon_utils.get_default_table_dir())}")
+        tables := groblon_core.get_tables(groblon_utils.get_default_table_dir()) or
+        {
+          http_log.error('failed to \x1b[38;5;45m/get_table_contents\x1b[0m. $err')
+          
+          return http.Response
+          {
+            status_code: 400
+            body: '{"status":"error","msg":"Failed to read table directory", "errorDescription":"$err"}'
+            header: cors_headers()
+          }
+        }
+        
+        resp := MsgResponse
+        {
+          status: 'ok'
+          msg: 'Operation successful'
+          table_data: tables
+        }
+        
+        return http.Response
+        {
+          status_code: 200
+          body: json.encode(resp)
+          header: cors_headers()
+        }
+      }
+      '/delete_table' 
+      {
+        /*
+        Delete / remove an exisisting note (deleting a file)
+        */
+        data := json.decode(MsgRequest, req.data) or
+        {
+          http_log.error('failed to \x1b[38;5;45m/delete_table\x1b[0m. Invalid JSON received')
+          return http.Response
+          {
+            status_code: 400
+            body: '{"status":"error","msg":"Invalid JSON"}'
+            header: cors_headers()
+          }
+        }
+      
+        //println('Deleting note: $data.msg')
+        http_log.info("Received request: \x1b[38;5;45m/delete_table\x1b[0m :: $data.msg")
+        
+        groblon_core.delete_table(data.msg)
+        
+        resp := MsgResponse{
+          status: 'ok'
+          msg: 'Table deleted: $data.msg'
+        }
         return http.Response
         {
           status_code: 200

@@ -53,3 +53,29 @@ export const useNotesStore = defineStore('notes', () => {
     fetchNotes,
   }
 })
+
+export const useTablesStore = defineStore('tables', () => {
+  // reactive array for notes
+  const tables = ref<Table[]>([])
+  const loading = ref(false)
+
+  // fetch notes from server
+  async function fetchTables() {
+    loading.value = true
+    try {
+      const res = await server.get_tables()
+      // assuming res.data is the array of notes
+      tables.value = res.table_data
+    } catch (err) {
+      console.error('Failed to fetch notes:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return {
+    tables,
+    loading,
+    fetchTables,
+  }
+})

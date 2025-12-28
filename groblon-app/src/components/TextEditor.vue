@@ -1,12 +1,12 @@
 <template>
-  <v-main>
+  
     <v-card>
       <v-toolbar color="primary-light">
         <!--
         To add:
         - Note properties (File properties)
         -->
-        <v-div class="mr-4"></v-div>
+        <v-div class="mr-2"></v-div>
         <v-btn
           class="mr-3"
           icon="mdi-dots-vertical"
@@ -102,7 +102,7 @@
         </v-card>
       </v-dialog>
     </div>
-  </v-main>
+  
 </template>
 
 <script setup lang="ts">

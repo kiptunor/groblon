@@ -9,6 +9,8 @@ import groblon_core
 
 fn main()
 {
+  groblon_utils.setup()
+  
   server_api.server_init()
   // println(groblon_utils.get_default_note_dir())
   // println(groblon_utils.get_config_dir())

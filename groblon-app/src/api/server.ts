@@ -25,6 +25,11 @@ type Note = {
   content: string
 }
 
+type Table = {
+  filename: string
+  content: string
+}
+
 
 export class GroblonServer {
   private api: AxiosInstance
@@ -93,6 +98,40 @@ export class GroblonServer {
             text_content: note.content
           }
         })
+      return res.data
+    }
+    catch (err) {
+      console.error('Request failed:', err)
+      return null
+    }
+  }
+  
+  async create_table(name: string): Promise<PostResponse> {
+    try {
+      const res = await this.api.post<PostResponse>('/create_table', { msg: name })
+      return res.data
+    }
+    catch (err) {
+      console.error('Request failed:', err)
+      return null
+    }
+  }
+  
+  async get_tables(): Promise<PostResponse> {
+    try {
+      const res = await this.api.post<PostResponse>('/get_table_contents', {})
+      console.log('Table files:', res.data)
+      return res.data
+    }
+    catch (err) {
+      console.error('Request failed:', err)
+      return null
+    }
+  }
+  
+  async delete_table(name: string): Promise<PostResponse> {
+    try {
+      const res = await this.api.post<PostResponse>('/delete_table', { msg: name })
       return res.data
     }
     catch (err) {

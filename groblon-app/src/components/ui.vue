@@ -3,97 +3,94 @@
     <v-layout>
       <v-container class="pa-0 ma-0" fluid>
         <v-row class="fill-height" no-gutters>
-          <v-col cols="auto">
-            <v-card class="pa-2 fill-height" max-width="300">
-              <v-list v-model:opened="ui.opened" v-model:selected="ui.selected" selectable density="proeminent">
-                <v-list-group color="primary" value="notes">
-                  <template #activator="{ props }">
+          <v-col cols="2">
+            <v-sheet class="pa-2 ma-2 fill-height">
+              <v-card class="pa-2" max-width="300">
+                <v-list v-model:opened="ui.opened" v-model:selected="ui.selected" selectable density="proeminent">
+                  <v-list-group color="primary" value="notes">
+                    <template #activator="{ props }">
+                      <v-list-item
+                        class="mb-2"
+                        color="primary"
+                        v-bind="props"
+                        prepend-icon="mdi-sticker-text"
+                        rounded="lg"
+                        title="Notes"
+                      ></v-list-item>
+                    </template>
+  
+                    <!-- Render the notes list-->
                     <v-list-item
+                      v-for="item in notes_list"
+                      :key="item.value"
                       class="mb-2"
-                      color="primary"
-                      v-bind="props"
-                      prepend-icon="mdi-sticker-text"
+                      :prepend-icon="item.icon"
                       rounded="lg"
-                      title="Notes"
-                    ></v-list-item>
-                  </template>
-
-                  <!-- Render the notes list-->
-                  <v-list-item
-                    v-for="item in notes_test"
-                    :key="item.value"
-                    class="mb-2"
-                    :prepend-icon="item.icon"
-                    rounded="lg"
-                    :value="item.f_path_name"
-                  >
-                    <v-list-item-title>{{ item.f_path_name.split('/').pop() }}</v-list-item-title>
-                  </v-list-item>
-                </v-list-group>
-                
-                
-                <v-list-group color="primary" value="tables">
-                  <template #activator="{ props }">
+                      :value="item.f_path_name"
+                    >
+                      <v-list-item-title>{{ item.f_path_name.split('/').pop() }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list-group>
+                  
+                  <v-list-group color="primary" value="tables">
+                    <template #activator="{ props }">
+                      <v-list-item
+                        class="mb-2"
+                        color="primary"
+                        v-bind="props"
+                        prepend-icon="mdi-file-table"
+                        rounded="lg"
+                        title="Tables"
+                      ></v-list-item>
+                    </template>
+  
+                    <!-- Render table list-->
                     <v-list-item
+                      v-for="item in table_list"
+                      :key="item.value"
                       class="mb-2"
-                      color="primary"
-                      v-bind="props"
-                      prepend-icon="mdi-file-table"
+                      :prepend-icon="item.icon"
                       rounded="lg"
-                      title="Tables"
-                    ></v-list-item>
-                  </template>
-
-                  <!-- Render a temporary table list-->
+                      :value="item.f_path_name"
+                    >
+                      <v-list-item-title>{{ item.f_path_name.split('/').pop() }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list-group>
+  
                   <v-list-item
                     class="mb-2"
-                    prepend-icon="mdi-table-large"
+                    color="primary"
+                    label="Media Access"
                     rounded="lg"
-                    value="t1"
-                    title="Table 1"
+                    value="media-access"
                   >
+                    <template #prepend>
+                      <v-icon icon="mdi-multimedia" />
+                    </template>
+                    <v-list-item-title>Media Access</v-list-item-title>
                   </v-list-item>
+  
                   <v-list-item
                     class="mb-2"
-                    prepend-icon="mdi-table-large"
+                    color="primary"
+                    label="Settings"
                     rounded="lg"
-                    value="t2"
-                    title="Table 2"
+                    value="settings"
+                    @click="settingsDialog = true"
                   >
+                    <template #prepend>
+                      <v-icon icon="mdi-cog" />
+                    </template>
+                    <v-list-item-title>Settings</v-list-item-title>
                   </v-list-item>
-                </v-list-group>
-
-                <v-list-item
-                  class="mb-2"
-                  color="primary"
-                  label="Media Access"
-                  rounded="lg"
-                  value="media-access"
-                >
-                  <template #prepend>
-                    <v-icon icon="mdi-multimedia" />
-                  </template>
-                  <v-list-item-title>Media Access</v-list-item-title>
-                </v-list-item>
-
-                <v-list-item
-                  class="mb-2"
-                  color="primary"
-                  label="Settings"
-                  rounded="lg"
-                  value="settings"
-                  @click="settingsDialog = true"
-                >
-                  <template #prepend>
-                    <v-icon icon="mdi-cog" />
-                  </template>
-                  <v-list-item-title>Settings</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-card>
+                </v-list>
+              </v-card>
+            </v-sheet>
           </v-col>
-          <v-col class="pa-2">
-            <component :is="currentComponent" />
+          <v-col>
+            <v-sheet class="pa-2 ma-2">
+              <component :is="currentComponent"/>
+            </v-sheet>
           </v-col>
         </v-row>
       </v-container>
@@ -104,7 +101,7 @@
 <script setup lang="ts">
   import { computed, onMounted, ref, shallowRef, watch } from 'vue'
   // import { defineStore } from 'pinia'
-  import { useUI, useNotesStore } from '@/stores/ui'
+  import { useUI, useNotesStore, useTablesStore } from '@/stores/ui'
   import { textEditorControl } from '@/stores/TextEditor'
   import MediaAccess from './MediaAccess.vue'
   import Settings from './Settings.vue'
@@ -120,9 +117,14 @@
     f_path_name: string
     text_content: string
   }
+  
+  interface Table {
+    f_path_name: string
+    text_content: string
+  }
 
 
-  type NoteItem = {
+  type GroupItem = {
     title: string
     icon: string
     value: string
@@ -131,13 +133,14 @@
   const ui = useUI()
   const text_editor_ctrl = textEditorControl()
   const notesStore = useNotesStore()
+  const tablesStore = useTablesStore()
 
   /*
   - - - - Server Interaction - - - -
   */
   const message = ref<string>('')
-  const notes_test = ref<Note[]>([])
-  const titles = ref<NoteItem[]>([])
+  const notes_list = ref<Note[]>([])
+  const note_titles = ref<GroupItem[]>([])
 
 
 
@@ -146,14 +149,15 @@
     console.debug('Server Resp:', message.value?.msg)
 
     notesStore.fetchNotes()
+    tablesStore.fetchTables()
   })
 
   watch(
     () => notesStore.notes,
     (newNotes) => {
       if (!newNotes) return
-      notes_test.value = newNotes
-      titles.value = newNotes.map(note => ({
+      notes_list.value = newNotes
+      note_titles.value = newNotes.map(note => ({
         title: note.f_path_name.split('/').pop() ?? note.f_path_name,
         icon: 'mdi-text-box',
         value: note.f_path_name
@@ -170,13 +174,31 @@
 
   const selectedNote = computed(() => {
     if (!selectedNotePath.value) return null
-    return notes_test.value.find(n => n.f_path_name === selectedNotePath.value) ?? null
+    return notes_list.value.find(n => n.f_path_name === selectedNotePath.value) ?? null
   })
 
   watch(selectedNote, (note) => {
     if (!note) return
     text_editor_ctrl.pushText(note)
   })
+  
+  
+  const table_list = ref<Table[]>([])
+  const table_titles = ref<GroupItem[]>([])
+  
+  watch(
+    () => tablesStore.tables,
+    (newTables) => {
+      if (!newTables) return
+      table_list.value = newTables
+      table_titles.value = newTables.map(table => ({
+        title: table.f_path_name.split('/').pop() ?? table.f_path_name,
+        icon: 'mdi-text-box',
+        value: table.f_path_name
+      }))
+    },
+    { immediate: true }
+  )
 
   /*
   - - - - Sidebar Functionality - - - -

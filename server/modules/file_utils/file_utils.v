@@ -22,13 +22,3 @@ pub fn is_file_changed(file_name string, mut last_mod)
     last_mod = curr_mod
   }
 }
-
-pub fn create_empty_file(file_name string)
-{
-  // Todo
-}
-
-pub fn delete_file(file_name string)
-{
-  // Todo
-}
