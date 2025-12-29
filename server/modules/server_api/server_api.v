@@ -38,6 +38,12 @@ struct SaveNoteRequest
   current_note groblon_core.TextNote
 }
 
+struct SaveTableRequest
+{
+  msg string
+  current_table groblon_core.TableFile
+}
+
 struct MsgResponse
 {
   status string
@@ -411,6 +417,44 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         resp := MsgResponse{
           status: 'ok'
           msg: 'Table deleted: $data.msg'
+        }
+        return http.Response
+        {
+          status_code: 200
+          body: json.encode(resp)
+          header: cors_headers()
+        }
+      }
+      '/write_table'
+      {
+        /*
+        Write / overwrite an entire file with the received contents
+        */
+        data := json.decode(SaveTableRequest, req.data) or
+        {
+          http_log.error('failed to \x1b[38;5;45m/write_table\x1b[0m. Invalid JSON received')
+          return http.Response
+          {
+            status_code: 400
+            body: '{"status":"error","msg":"Invalid JSON while writing table"}'
+            header: cors_headers()
+          }
+        }
+        
+        http_log.info('Received request: \x1b[38;5;45m/write_table\x1b[0m')
+        
+        table := groblon_core.TableFile
+        {
+          f_path_name: data.current_table.f_path_name
+          table_content: data.current_table.table_content
+        }
+        
+        groblon_core.save_table(table)
+        
+        resp := MsgResponse
+        {
+          status: 'ok'
+          msg: 'Received content: $data.msg'
         }
         return http.Response
         {

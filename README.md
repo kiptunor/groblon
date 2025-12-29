@@ -17,8 +17,12 @@ Current feature plans:
         - [X] Text save
         - [ ] Markdown display / formatting
     - [ ] Link Saver with embed view
-    - [ ] Mark Favorite Notes
-    - [ ] Table editing with CSV formatting (In progress)
+    - [ ] Mark Favorite Notes / Tables
+    - 🔽 Table editor
+        - [ ] Table Reading / Display
+        - [X] Table saver
+        - [ ] Custom cell coloring
+        - [X] Colum Header Rename
     - [X] Note creation
     - [X] Note deletion
     - [X] Note content retrieval

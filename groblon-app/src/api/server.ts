@@ -120,7 +120,6 @@ export class GroblonServer {
   async get_tables(): Promise<PostResponse> {
     try {
       const res = await this.api.post<PostResponse>('/get_table_contents', {})
-      console.log('Table files:', res.data)
       return res.data
     }
     catch (err) {
@@ -132,6 +131,25 @@ export class GroblonServer {
   async delete_table(name: string): Promise<PostResponse> {
     try {
       const res = await this.api.post<PostResponse>('/delete_table', { msg: name })
+      return res.data
+    }
+    catch (err) {
+      console.error('Request failed:', err)
+      return null
+    }
+  }
+  
+  async save_table(table: Table): Promise<PostResponse> {
+    try {
+      const res = await this.api.post<PostResponse>('/write_table',
+        {
+          msg: 'From Groblon webapp', // I think this is optional dosen't seem to be that useful lol
+          current_table:
+          {
+            f_path_name: table.filename,
+            table_content: table.content
+          }
+        })
       return res.data
     }
     catch (err) {

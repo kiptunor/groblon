@@ -100,7 +100,7 @@
 
 <script setup lang="ts">
   import { computed, onMounted, ref, shallowRef, watch } from 'vue'
-  // import { defineStore } from 'pinia'
+  import { registerAllModules } from 'handsontable/registry';
   import { useUI, useNotesStore, useTablesStore } from '@/stores/ui'
   import { textEditorControl } from '@/stores/TextEditor'
   import MediaAccess from './MediaAccess.vue'
@@ -141,6 +141,10 @@
   const message = ref<string>('')
   const notes_list = ref<Note[]>([])
   const note_titles = ref<GroupItem[]>([])
+  
+  
+  // Do it here first and only once for better performance
+  registerAllModules();
 
 
 
@@ -186,6 +190,7 @@
   const table_list = ref<Table[]>([])
   const table_titles = ref<GroupItem[]>([])
   
+  
   watch(
     () => tablesStore.tables,
     (newTables) => {
@@ -199,6 +204,16 @@
     },
     { immediate: true }
   )
+  
+  const selectedTablePath = computed(() => {
+    const val = ui.selected[0]
+    return typeof val === 'string' ? val : null
+  })
+  
+  const selectedTable = computed(() => {
+    if (!selectedTablePath.value) return null
+    return table_list.value.find(n => n.f_path_name === selectedTablePath.value) ?? null
+  })
 
   /*
   - - - - Sidebar Functionality - - - -

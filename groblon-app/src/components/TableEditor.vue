@@ -29,19 +29,17 @@
     ></v-btn>
   </v-toolbar>
 
-  
-  <!--<div id="example1" class="table-container">
-    <hot-table :settings="hotSettings"></hot-table>
-  </div>-->
+  <!-- Table Area -->
   <div id="example1" class="table-container">
     <div class="example-controls-container">
       <div class="controls">
-        <v-btn variant="tonal" v-on:click="swapHotData">Load new data</v-btn>
+        <!--<v-btn variant="tonal" v-on:click="swapHotData">Load new data</v-btn>-->
+        <!--<v-btn variant="tonal" v-on:click="getCsvString">Export CSV</v-btn>-->
       </div>
     </div>
   
     
-    <hot-table ref="hotTableComponent" :settings="hotSettings"></hot-table><br/>
+    <hot-table ref="hotTableComponent" :settings="hotSettings"></hot-table>
   </div>
   
   <!-- Create Table dialog -->
@@ -91,12 +89,33 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { HotTable } from '@handsontable/vue3';
-import { registerAllModules } from 'handsontable/registry';
+//import { registerAllModules } from 'handsontable/registry';
 import 'handsontable/styles/handsontable.css';
 import 'handsontable/styles/ht-theme-horizon.css';
 
+import { useUI } from '@/stores/ui';
+import { server } from '../api/server'
 
-registerAllModules();
+
+
+
+const ui = useUI()
+
+
+const current_file_path = ref<string | null>(null)
+
+
+watch(
+  () => ui.selected,
+  (newVal) => {
+    if (!newVal || newVal.length === 0) {
+      return
+    }
+    current_file_path.value = newVal[0]
+    // console.log('Current file path:', current_file_path.value)
+  },
+  { immediate: true }
+)
 
 
 
@@ -110,12 +129,6 @@ const TableEditorComponent = defineComponent({
     return {
       hotSettings: {
         themeName: 'ht-theme-horizon-dark',
- 
-        // data: [
-        //   ['A1', 'B1', 'C1', '67'],
-        //   ['A2', 'B2', 'C2', '67'],
-        //   ['A3', 'B3', 'C3', '67'],
-        // ],
         
         data: predefined_cells,
 
@@ -123,7 +136,6 @@ const TableEditorComponent = defineComponent({
         rowHeaders: true,
         
         contextMenu: true,
-
  
         dropdownMenu: {
           items: {
@@ -167,6 +179,35 @@ const TableEditorComponent = defineComponent({
             remove_col: 'remove_col'
            }
         },
+        
+        afterChange: (changes, source) => {
+          if (!changes || source !== 'edit') return;
+          
+          // Access the Handsontable instance via Vue ref
+          const hot = this.hotInstance;
+          if (!hot) return;
+          
+          const exportPlugin = hot.getPlugin('exportFile');
+          
+          changes.forEach(([row, col, oldValue, newValue]) => {
+            if (oldValue !== newValue) {
+              const csvString = exportPlugin.exportAsString('csv', {
+                bom: true,
+                columnHeaders: true,
+                columnDelimiter: ',',
+                exportHiddenColumns: true,
+                exportHiddenRows: true,
+                rowDelimiter: '\r\n',
+                rowHeaders: true,
+              });
+
+              server.save_table({
+                filename: current_file_path.value,
+                content: csvString
+              })
+            }
+          });
+        },
  
         width: '100%',
         height: 880,
@@ -180,10 +221,37 @@ const TableEditorComponent = defineComponent({
   },
   methods: {
     swapHotData() {
+      /*
+      Todo:
+      Load table from CSV received string or load a set of 50 x 50 table if no received CSV content is available.
+      */
       // The Handsontable instance is stored under the `hotInstance` property of the wrapper component.
       this.$refs.hotTableComponent.hotInstance.loadData([['new', 'data']]);
+    },
+    getCsvString() {
+      const hot = this.$refs.hotTableComponent.hotInstance;
+    
+      // Use the exportFile plugin
+      const exportPlugin = hot.getPlugin('exportFile');
+    
+      const exportedString = exportPlugin.exportAsString('csv', {
+        bom: true,
+        columnDelimiter: ',',
+        columnHeaders: true,
+        exportHiddenColumns: true,
+        exportHiddenRows: true,
+        rowDelimiter: '\r\n',
+        rowHeaders: true,
+      });
+    
+      console.log('CSV String:', exportedString);
+      return exportedString;
     }
   },
+  mounted() {
+      // Grab Handsontable instance from ref
+      this.hotInstance = this.$refs.hotTableComponent.hotInstance;
+    },
   components: { HotTable }
 });
 
@@ -211,36 +279,28 @@ const dialActions = [
   { color: 'primary', icon: 'mdi-refresh', tooltip: 'Refresh Table list' },
 ]
 
-// Tried to fix that issue somehow XDDDD
 const dialActionsReversed = [...dialActions].reverse()
 
 function onDialAction(item, index) {
   if (item.icon === 'mdi-table-plus') {
     tableName.value = ''
     tableDialog.value = true
-    // server.create_table(current_file_path.value)
-    console.log('Create table')
-    //createTable();
   }
   if (item.icon === 'mdi-table-minus') {
     // Todo: Add warning dialog
     server.delete_table(current_file_path.value)
     tablesStore.fetchTables()
-    console.log('Delete table')
   }
   if (item.icon === 'mdi-refresh') {
     tablesStore.fetchTables()
-    // console.log('Refresh note list action')
-    console.log('Refresh table list')
   }
 }
 
 function createTable() {
-  // server.create_table(current_file_path.value)
   tableDialog.value = false
   server.create_table(tableName.value)
   
-  // tablesStore.fetchTables()
+  tablesStore.fetchTables()
 }
 
 </script>

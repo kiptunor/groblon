@@ -61,7 +61,7 @@ pub fn get_notes(dir_path string) ![]TextNote
         notes << TextNote
         {
           f_path_name: full_path
-          text_content: os.read_file(full_path) or { '' } // Todo: Read the file content
+          text_content: os.read_file(full_path) or { '' }
         }
       }
     }
@@ -133,7 +133,7 @@ pub fn get_tables(dir_path string) ![]TableFile
         {
           f_path_name: full_path
           //text_content: os.read_file(full_path) or { '' } // Todo: Read the file content
-          table_content: ''
+          table_content: os.read_file(full_path) or { '' }
         }
       }
     }
@@ -154,5 +154,14 @@ pub fn delete_table(file_path string)
   else
   {
     log.error('delete_table() failed: File does not exist')
+  }
+}
+
+pub fn save_table(table TableFile)
+{
+  os.write_file(table.f_path_name, table.table_content) or
+  {
+    log.error('save_table() failed: $err')
+    return
   }
 }

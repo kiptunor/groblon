@@ -26,12 +26,6 @@
           </v-speed-dial>
         </v-btn>
 
-        <!--
-        <v-btn
-          v-tooltip:bottom="'Search text'"
-          class="ml-3"
-          icon="mdi-magnify"
-        ></v-btn>-->
         <v-text-field class="mt-6" style="max-width: 300px; width: 100%;" label="Search text" variant="solo-filled"></v-text-field>
         
         <v-btn
