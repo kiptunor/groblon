@@ -355,6 +355,7 @@ import { useTablesStore } from '@/stores/ui'
 
 
 const tablesStore = useTablesStore()
+const tableCtrl = useTableCtrl()
 
 const tableDialog = shallowRef(false)
 const tableName = ref('')
@@ -376,6 +377,7 @@ function onDialAction(item, index) {
   }
   if (item.icon === 'mdi-table-minus') {
     // Todo: Add warning dialog
+    tableCtrl.setEmptyTable()
     server.delete_table(current_file_path.value)
     tablesStore.fetchTables()
   }
