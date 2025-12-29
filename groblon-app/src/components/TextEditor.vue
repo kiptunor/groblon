@@ -135,10 +135,12 @@
     }
     if (item.icon === 'mdi-text-box-minus-outline') {
       // Todo: Add warning dialog
+      text_editor_ctrl.emptyContent()
       server.delete_note(current_file_path.value)
       notesStore.fetchNotes()
     }
     if (item.icon === 'mdi-refresh') {
+      text_editor_ctrl.emptyContent()
       notesStore.fetchNotes()
       // console.log('Refresh note list action')
     }
