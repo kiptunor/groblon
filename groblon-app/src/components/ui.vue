@@ -107,6 +107,7 @@
   import Settings from './Settings.vue'
   import TextEditor from './TextEditor.vue'
   import TableEditor from './TableEditor.vue'
+  import { useTableCtrl } from '@/stores/TableEditor'
 
   import { server } from '../api/server'
 
@@ -134,6 +135,7 @@
   const text_editor_ctrl = textEditorControl()
   const notesStore = useNotesStore()
   const tablesStore = useTablesStore()
+  const tableCtrl = useTableCtrl()
 
   /*
   - - - - Server Interaction - - - -
@@ -213,6 +215,20 @@
   const selectedTable = computed(() => {
     if (!selectedTablePath.value) return null
     return table_list.value.find(n => n.f_path_name === selectedTablePath.value) ?? null
+  })
+  
+  watch(selectedTable, (table) => {
+    if (!table) return
+    // text_editor_ctrl.pushText(note)
+    const csv_string = table.table_content
+    // console.log(csv_string)
+    if (csv_string) {
+      // console.log('Loading CSV...')
+      tableCtrl.loadCsv(csv_string)
+    }
+    else {
+      tableCtrl.setEmptyTable()
+    }
   })
 
   /*

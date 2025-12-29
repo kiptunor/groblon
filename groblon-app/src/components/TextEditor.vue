@@ -164,6 +164,7 @@
 
   const textarea_string = ref('')
   let timeout: number | undefined
+  let saveRefreshTimeout: number | undefined;
   const isTextareaFocused = ref(false)
 
   const current_file_path = ref<string | null>(null)
@@ -187,6 +188,7 @@
       if (!isTextareaFocused.value) return
 
       clearTimeout(timeout)
+      clearTimeout(saveRefreshTimeout);
 
       timeout = window.setTimeout(() => {
         // console.log('Saving action:', current_file_path.value)
@@ -194,6 +196,10 @@
           filename: current_file_path.value,
           content: newValue
         })
+        
+        saveRefreshTimeout = window.setTimeout(() => {
+          notesStore.fetchNotes()
+        }, 500)
       }, 1000)
     }
   )

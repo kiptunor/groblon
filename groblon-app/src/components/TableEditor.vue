@@ -31,14 +31,6 @@
 
   <!-- Table Area -->
   <div id="example1" class="table-container">
-    <div class="example-controls-container">
-      <div class="controls">
-        <!--<v-btn variant="tonal" v-on:click="swapHotData">Load new data</v-btn>-->
-        <!--<v-btn variant="tonal" v-on:click="getCsvString">Export CSV</v-btn>-->
-      </div>
-    </div>
-  
-    
     <hot-table ref="hotTableComponent" :settings="hotSettings"></hot-table>
   </div>
   
@@ -94,12 +86,16 @@ import 'handsontable/styles/handsontable.css';
 import 'handsontable/styles/ht-theme-horizon.css';
 
 import { useUI } from '@/stores/ui';
+import { useTableCtrl } from '@/stores/TableEditor';
+import { useTablesStore } from '@/stores/ui'
 import { server } from '../api/server'
 
 
 
 
 const ui = useUI()
+const tablesStore = useTablesStore()
+
 
 
 const current_file_path = ref<string | null>(null)
@@ -123,6 +119,8 @@ const rows = 50
 const cols = 50
 const predefined_cells = Array.from({ length: rows }, () => Array.from({ length: cols }, () => ''))
 
+let saveRefreshTimeout: number | undefined;
+
 
 const TableEditorComponent = defineComponent({
   data() {
@@ -134,7 +132,6 @@ const TableEditorComponent = defineComponent({
 
         colHeaders: true,
         rowHeaders: true,
-        
         contextMenu: true,
  
         dropdownMenu: {
@@ -184,7 +181,7 @@ const TableEditorComponent = defineComponent({
           if (!changes || source !== 'edit') return;
           
           // Access the Handsontable instance via Vue ref
-          const hot = this.hotInstance;
+          const hot = this.$refs.hotTableComponent.hotInstance
           if (!hot) return;
           
           const exportPlugin = hot.getPlugin('exportFile');
@@ -198,13 +195,19 @@ const TableEditorComponent = defineComponent({
                 exportHiddenColumns: true,
                 exportHiddenRows: true,
                 rowDelimiter: '\r\n',
-                rowHeaders: true,
+                rowHeaders: false,
               });
 
               server.save_table({
                 filename: current_file_path.value,
                 content: csvString
               })
+              
+              // Reload table list and their contents with a bit of delay due to communication latency
+              clearTimeout(saveRefreshTimeout);
+              saveRefreshTimeout = window.setTimeout(async () => {
+                await tablesStore.fetchTables()
+              }, 500);
             }
           });
         },
@@ -241,7 +244,7 @@ const TableEditorComponent = defineComponent({
         exportHiddenColumns: true,
         exportHiddenRows: true,
         rowDelimiter: '\r\n',
-        rowHeaders: true,
+        rowHeaders: false,
       });
     
       console.log('CSV String:', exportedString);
@@ -249,9 +252,9 @@ const TableEditorComponent = defineComponent({
     }
   },
   mounted() {
-      // Grab Handsontable instance from ref
-      this.hotInstance = this.$refs.hotTableComponent.hotInstance;
-    },
+    const store = useTableCtrl()
+    store.setHotInstance(this.$refs.hotTableComponent.hotInstance)
+  },
   components: { HotTable }
 });
 
