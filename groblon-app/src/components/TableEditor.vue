@@ -121,6 +121,17 @@ const predefined_cells = Array.from({ length: rows }, () => Array.from({ length:
 
 let saveRefreshTimeout: number | undefined;
 
+const COLUMN_TYPES = {
+  text: 'Text',
+  numeric: 'Numeric',
+  checkbox: 'Checkbox',
+  date: 'Date',
+  time: 'Time',
+  dropdown: 'Dropdown',
+  autocomplete: 'Autocomplete',
+  readOnly: 'Read only'
+}
+
 
 const TableEditorComponent = defineComponent({
   data() {
@@ -133,6 +144,7 @@ const TableEditorComponent = defineComponent({
         colHeaders: true,
         rowHeaders: true,
         contextMenu: true,
+        filters: true,
  
         dropdownMenu: {
           items: {
@@ -173,8 +185,81 @@ const TableEditorComponent = defineComponent({
                 this.updateSettings({ colHeaders: headers })
               }
             },
-            remove_col: 'remove_col'
-           }
+            remove_col: 'remove_col',
+            // ----------------
+            // Clear column
+            // ----------------
+            clear_column: {
+              name: 'Clear column',
+              callback(_, selection) {
+                const col = selection[0].start.col
+                const rows = this.countRows()
+        
+                for (let r = 0; r < rows; r++) {
+                  this.setDataAtCell(r, col, null)
+                }
+              }
+            },
+            
+            separator4: '---------',
+            
+            // ----------------
+            // Alignment
+            // ----------------
+            align_left: {
+              name: 'Align left',
+              callback(_, selection) {
+                const col = selection[0].start.col
+                this.setCellMeta(0, col, 'className', 'htLeft')
+                this.render()
+              }
+            },
+            
+            align_center: {
+              name: 'Align center',
+              callback(_, selection) {
+                const col = selection[0].start.col
+                this.setCellMeta(0, col, 'className', 'htCenter')
+                this.render()
+              }
+            },
+            
+            align_right: {
+              name: 'Align right',
+              callback(_, selection) {
+                const col = selection[0].start.col
+                this.setCellMeta(0, col, 'className', 'htRight')
+                this.render()
+              }
+            },
+            
+            separator5: '---------',
+            
+            // ----------------
+            // Read-only toggle
+            // ----------------
+            toggle_readonly: {
+              name: 'Toggle read-only',
+              callback(_, selection) {
+                const col = selection[0].start.col
+                const meta = this.getCellMeta(0, col)
+        
+                const newState = !meta.readOnly
+                this.setCellMeta(0, col, 'readOnly', newState)
+                this.render()
+              }
+            },
+            separator2: '---------',
+           
+            // ----------------
+            // Filtering (built-in)
+            // ----------------
+            filter_by_condition: 'filter_by_condition',
+            filter_by_value: 'filter_by_value',
+            filter_action_bar: 'filter_action_bar',
+        
+            separator3: '---------',
+          }
         },
         
         afterChange: (changes, source) => {

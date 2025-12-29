@@ -19,10 +19,11 @@ Current feature plans:
     - [ ] Link Saver with embed view
     - [ ] Mark Favorite Notes / Tables
     - 🔽 Table editor
-        - [ ] Table Reading / Display
+        - [X] Table Reading / Display
         - [X] Table saver
-        - [ ] Custom cell coloring
+        - [ ] Cell Formatting
         - [X] Colum Header Rename
+        - [ ] Colum types setting
     - [X] Note creation
     - [X] Note deletion
     - [X] Note content retrieval
