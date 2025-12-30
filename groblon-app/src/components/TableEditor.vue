@@ -378,7 +378,7 @@ function onDialAction(item, index) {
   if (item.icon === 'mdi-table-minus') {
     // Todo: Add warning dialog
     tableCtrl.setEmptyTable()
-    server.delete_table(current_file_path.value)
+    server.delete_file(current_file_path.value)
     tablesStore.fetchTables()
   }
   if (item.icon === 'mdi-refresh') {

@@ -28,6 +28,7 @@ type Note = {
 type Table = {
   filename: string
   content: string
+  type: string
 }
 
 
@@ -56,7 +57,9 @@ export class GroblonServer {
 
   async create_note(name: string): Promise<PostResponse> {
     try {
-      const res = await this.api.post<PostResponse>('/create_note', { msg: name })
+      const res = await this.api.post<PostResponse>('/create_note', { 
+        file_path: name 
+      })
       return res.data
     }
     catch (err) {
@@ -65,9 +68,9 @@ export class GroblonServer {
     }
   }
 
-  async delete_note(name: string): Promise<PostResponse> {
+  async delete_file(file: string): Promise<PostResponse> {
     try {
-      const res = await this.api.post<PostResponse>('/delete_note', { msg: name })
+      const res = await this.api.post<PostResponse>('/delete_file', { file_path: file })
       return res.data
     }
     catch (err) {
@@ -91,12 +94,8 @@ export class GroblonServer {
     try {
       const res = await this.api.post<PostResponse>('/write_note',
         {
-          msg: 'From Groblon webapp', // I think this is optional dosen't seem to be that useful lol
-          current_note:
-          {
-            f_path_name: note.filename,
-            text_content: note.content
-          }
+          file_path: note.filename,
+          content: note.content
         })
       return res.data
     }
@@ -108,7 +107,10 @@ export class GroblonServer {
   
   async create_table(name: string): Promise<PostResponse> {
     try {
-      const res = await this.api.post<PostResponse>('/create_table', { msg: name })
+      const res = await this.api.post<PostResponse>('/create_table', { 
+        file_path: name,
+        type: ''
+      })
       return res.data
     }
     catch (err) {
@@ -142,14 +144,11 @@ export class GroblonServer {
   async save_table(table: Table): Promise<PostResponse> {
     try {
       const res = await this.api.post<PostResponse>('/write_table',
-        {
-          msg: 'From Groblon webapp', // I think this is optional dosen't seem to be that useful lol
-          current_table:
-          {
-            f_path_name: table.filename,
-            table_content: table.content
-          }
-        })
+      {
+        file_path: table.filename,
+        content: table.content
+      })
+      console.log(res)
       return res.data
     }
     catch (err) {

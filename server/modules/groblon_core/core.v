@@ -78,19 +78,19 @@ pub fn save_note(note TextNote)
   }
 }
 
-pub fn delete_note(file_path string)
+pub fn delete_file(file_path string)
 {
   if os.exists(file_path) && os.is_file(file_path)
   {
     os.rm(file_path) or
     {
-      log.error('delete_note() -> os.rm() failed: $err')
+      log.error('delete_file() -> os.rm() failed: $err')
       return
     }
   }
   else
   {
-    log.error('delete_note() failed: File does not exist')
+    log.error('delete_file() failed: File does not exist')
   }
 }
 
