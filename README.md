@@ -1,5 +1,5 @@
 # Groblon
-A remote access journal
+A remote access journal with powerful features
 
 
 
