@@ -13,6 +13,12 @@ enum NoteType as u8
   table     // CSV formatted table note
 }
 
+enum TableType as u8
+{
+  csv
+  json
+}
+
 pub struct TextNote
 {
   pub:
@@ -27,13 +33,15 @@ pub struct TableFile
     f_path_name string @[required] // The file path and the name
     //mut color := Color
     table_content string
+    table_type TableType
 }
 
 
 
-pub fn create_note(n string)
+pub fn create_note(n string)!
 {
   // Necessary checking since os.write_file can't check if a file exist before creating it
+  /*
   if !os.exists(n)
   {
     os.write_file(n, '') or {
@@ -43,7 +51,15 @@ pub fn create_note(n string)
   else
   {
     log.error('Note Creation Error: ${n} already exists')
+    return error('note already exists: $n')
   }
+  */
+  if os.exists(n)
+  {
+    return error('note already exists: $n')
+  }
+ 
+  os.write_file(n, '')!
 }
 
 pub fn get_notes(dir_path string) ![]TextNote
@@ -69,29 +85,24 @@ pub fn get_notes(dir_path string) ![]TextNote
   return notes
 }
 
-pub fn save_note(note TextNote)
+pub fn save_note(note TextNote)!
 {
-  os.write_file(note.f_path_name, note.text_content) or
-  {
-    log.error('save_note() failed: $err')
-    return
-  }
+  os.write_file(note.f_path_name, note.text_content)!
 }
 
-pub fn delete_file(file_path string)
+pub fn delete_file(file_path string)!
 {
-  if os.exists(file_path) && os.is_file(file_path)
+  if !os.exists(file_path)
   {
-    os.rm(file_path) or
-    {
-      log.error('delete_file() -> os.rm() failed: $err')
-      return
-    }
+    return error('file does not exist')
   }
-  else
+  
+  if !os.is_file(file_path)
   {
-    log.error('delete_file() failed: File does not exist')
+    return error('path is not a file')
   }
+  
+  os.rm(file_path)!
 }
 
 pub fn get_note_info(note TextNote)
@@ -141,27 +152,7 @@ pub fn get_tables(dir_path string) ![]TableFile
   return tables
 }
 
-pub fn delete_table(file_path string)
+pub fn save_table(table TableFile)!
 {
-  if os.exists(file_path) && os.is_file(file_path)
-  {
-    os.rm(file_path) or
-    {
-      log.error('delete_table() -> os.rm() failed: $err')
-      return
-    }
-  }
-  else
-  {
-    log.error('delete_table() failed: File does not exist')
-  }
-}
-
-pub fn save_table(table TableFile)
-{
-  os.write_file(table.f_path_name, table.table_content) or
-  {
-    log.error('save_table() failed: $err')
-    return
-  }
+  os.write_file(table.f_path_name, table.table_content)!
 }

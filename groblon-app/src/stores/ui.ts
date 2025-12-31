@@ -39,7 +39,7 @@ export const useNotesStore = defineStore('notes', () => {
     try {
       const res = await server.get_notes()
       // assuming res.data is the array of notes
-      notes.value = res.data
+      notes.value = res.notes
     } catch (err) {
       console.error('Failed to fetch notes:', err)
     } finally {

@@ -26,9 +26,9 @@
                       class="mb-2"
                       :prepend-icon="item.icon"
                       rounded="lg"
-                      :value="item.f_path_name"
+                      :value="item.file_path"
                     >
-                      <v-list-item-title>{{ item.f_path_name.split('/').pop() }}</v-list-item-title>
+                      <v-list-item-title>{{ item.file_path.split('/').pop() }}</v-list-item-title>
                     </v-list-item>
                   </v-list-group>
                   
@@ -51,9 +51,9 @@
                       class="mb-2"
                       :prepend-icon="item.icon"
                       rounded="lg"
-                      :value="item.f_path_name"
+                      :value="item.file_path"
                     >
-                      <v-list-item-title>{{ item.f_path_name.split('/').pop() }}</v-list-item-title>
+                      <v-list-item-title>{{ item.file_path.split('/').pop() }}</v-list-item-title>
                     </v-list-item>
                   </v-list-group>
   
@@ -115,13 +115,13 @@
 
 
   interface Note {
-    f_path_name: string
-    text_content: string
+    file_path: string
+    content: string
   }
   
   interface Table {
-    f_path_name: string
-    text_content: string
+    file_path: string
+    content: string
   }
 
 
@@ -158,15 +158,17 @@
     tablesStore.fetchTables()
   })
 
+  
+  // This is so ugly
   watch(
     () => notesStore.notes,
     (newNotes) => {
       if (!newNotes) return
       notes_list.value = newNotes
       note_titles.value = newNotes.map(note => ({
-        title: note.f_path_name.split('/').pop() ?? note.f_path_name,
+        title: note.file_path.split('/').pop() ?? note.file_path,
         icon: 'mdi-text-box',
-        value: note.f_path_name
+        value: note.file_path
       }))
     },
     { immediate: true }
@@ -180,7 +182,7 @@
 
   const selectedNote = computed(() => {
     if (!selectedNotePath.value) return null
-    return notes_list.value.find(n => n.f_path_name === selectedNotePath.value) ?? null
+    return notes_list.value.find(n => n.file_path === selectedNotePath.value) ?? null
   })
 
   watch(selectedNote, (note) => {
@@ -192,16 +194,16 @@
   const table_list = ref<Table[]>([])
   const table_titles = ref<GroupItem[]>([])
   
-  
+  // I fucking hate this
   watch(
     () => tablesStore.tables,
     (newTables) => {
       if (!newTables) return
       table_list.value = newTables
       table_titles.value = newTables.map(table => ({
-        title: table.f_path_name.split('/').pop() ?? table.f_path_name,
+        title: table.file_path.split('/').pop() ?? table.file_path,
         icon: 'mdi-text-box',
-        value: table.f_path_name
+        value: table.file_path
       }))
     },
     { immediate: true }
@@ -214,16 +216,13 @@
   
   const selectedTable = computed(() => {
     if (!selectedTablePath.value) return null
-    return table_list.value.find(n => n.f_path_name === selectedTablePath.value) ?? null
+    return table_list.value.find(n => n.file_path === selectedTablePath.value) ?? null
   })
   
   watch(selectedTable, (table) => {
     if (!table) return
-    // text_editor_ctrl.pushText(note)
-    const csv_string = table.table_content
-    // console.log(csv_string)
+    const csv_string = table.content
     if (csv_string) {
-      // console.log('Loading CSV...')
       tableCtrl.loadCsv(csv_string)
     }
     else {
