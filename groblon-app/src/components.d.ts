@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    CodeStorage: typeof import('./components/CodeStorage.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     MediaAccess: typeof import('./components/MediaAccess.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

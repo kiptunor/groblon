@@ -69,6 +69,19 @@
                     </template>
                     <v-list-item-title>Media Access</v-list-item-title>
                   </v-list-item>
+                  
+                  <v-list-group color="primary" value="code-storage">
+                    <template #activator="{ props }">
+                      <v-list-item
+                        class="mb-2"
+                        color="primary"
+                        v-bind="props"
+                        prepend-icon="mdi-file-code"
+                        rounded="lg"
+                        title="Code Storage"
+                      ></v-list-item>
+                    </template>
+                  </v-list-group>
   
                   <v-list-item
                     class="mb-2"
@@ -107,6 +120,7 @@
   import Settings from './Settings.vue'
   import TextEditor from './TextEditor.vue'
   import TableEditor from './TableEditor.vue'
+  import CodeStorage from './CodeStorage.vue'
   import { useTableCtrl } from '@/stores/TableEditor'
 
   import { server } from '../api/server'
@@ -239,6 +253,8 @@
       return TextEditor
     if (ui.opened.includes('tables'))
       return TableEditor
+    if (ui.opened.includes('code-storage'))
+       return CodeStorage  
     if (ui.selected.includes('media-access'))
       return MediaAccess
     if (ui.selected.includes('settings'))

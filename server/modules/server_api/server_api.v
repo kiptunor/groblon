@@ -80,7 +80,7 @@ struct ErrorResponse
 {
   status            string
   error_description string
-  expected_request  map[string]string
+  expected_request  map[string]string 
   os_error          string
 }
 

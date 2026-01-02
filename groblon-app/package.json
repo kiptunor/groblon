@@ -17,6 +17,8 @@
     "@mdi/font": "7.4.47",
     "axios": "^1.13.2",
     "handsontable": "^16.2.0",
+    "monaco-editor": "^0.55.1",
+    "monaco-editor-vue3": "^1.0.5",
     "papaparse": "^5.5.3",
     "pinia": "^3.0.4",
     "vue": "^3.5.21",
