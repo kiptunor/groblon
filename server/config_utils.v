@@ -1,14 +1,15 @@
-module config_utils
+module main
 
 
 
 struct Config
 {
   // Config fields soon
-  server_port: u16,
-  notes_directory: string,
-  mut media_dirs := []
-  http_logging: bool,
+  server_port u16
+  notes_directory string
+  mut:
+    media_dirs  []string
+  http_logging bool
 }
 
 pub fn load_config()
@@ -29,7 +30,7 @@ pub fn load_config()
   // Load and return config structure
 }
 
-pub fn save_config(config: Config)
+pub fn save_config(config Config)
 {
   // Save config structure to file
 }

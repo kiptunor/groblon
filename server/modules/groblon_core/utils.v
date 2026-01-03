@@ -1,4 +1,4 @@
-module groblon_utils
+module groblon_core
 
 import os
 import log

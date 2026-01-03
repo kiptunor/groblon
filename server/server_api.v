@@ -1,9 +1,9 @@
-module server_api
+module main
 
 import net.http
 import json
 import log
-import groblon_utils
+//import groblon_utils
 import groblon_core
 
 
@@ -218,7 +218,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         }
 
         http_log.info('Creating note: $data.file_path')
-        groblon_core.create_note(groblon_utils.get_default_note_dir() + "/" + data.file_path) or
+        groblon_core.create_note(groblon_core.get_default_note_dir() + "/" + data.file_path) or
         {
           http_log.error('failed to \x1b[38;5;45m/create_note\x1b[0m. Invalid JSON received')
           err_resp := ErrorResponse
@@ -316,7 +316,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         http_log.info("Received request: \x1b[38;5;45m/get_note_contents\x1b[0m")
         
         // Use default note directory for now
-        raw_notes := groblon_core.get_notes(groblon_utils.get_default_note_dir()) or
+        raw_notes := groblon_core.get_notes(groblon_core.get_default_note_dir()) or
         {
           http_log.error('failed to \x1b[38;5;45m/get_note_contents\x1b[0m. $err')
           
@@ -475,7 +475,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         }
 
         http_log.info('Creating table: $data.file_path')
-        groblon_core.create_table(groblon_utils.get_default_table_dir() + "/" + data.file_path)
+        groblon_core.create_table(groblon_core.get_default_table_dir() + "/" + data.file_path)
         resp := MinMsgResponse
         {
           status: 'ok'
@@ -500,7 +500,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         
         // Use default note directory for now
         // println("Table files: ${groblon_core.get_tables(groblon_utils.get_default_table_dir())}")
-        raw_tables := groblon_core.get_tables(groblon_utils.get_default_table_dir()) or
+        raw_tables := groblon_core.get_tables(groblon_core.get_default_table_dir()) or
         {
           http_log.error('failed to \x1b[38;5;45m/get_table_contents\x1b[0m. $err')
           
@@ -676,7 +676,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
 }
 
 
-pub fn server_init()
+fn server_init()
 {
   mut server := http.Server
   {
