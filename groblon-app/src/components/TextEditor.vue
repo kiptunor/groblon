@@ -56,6 +56,11 @@
           prepend-icon="mdi-text-box"
           title="Create new note"
         >
+          <!--
+          Todo:
+          - Add an item selection for available directories added in server settings (default, then the rest)
+          - Fire create note action on enter / return key
+          -->
           <v-card-text>
             <v-text-field
               v-model="noteName"
@@ -108,7 +113,7 @@
 
   const noteDialog = shallowRef(false)
   const noteName = ref('')
-  const defaultFileExt = ref(false)
+  const defaultFileExt = ref(true)
   
   const text_editor_ctrl = textEditorControl()
   const ui = useUI()
@@ -194,7 +199,7 @@
 
       timeout = window.setTimeout(() => {
         // console.log('Saving action:', current_file_path.value)
-        server.save_note({
+        server.save_text_file({
           filename: current_file_path.value,
           content: newValue
         })

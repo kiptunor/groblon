@@ -90,9 +90,9 @@ export class GroblonServer {
     }
   }
   
-  async save_note(note: Note): Promise<PostResponse> {
+  async save_text_file(note: Note): Promise<PostResponse> {
     try {
-      const res = await this.api.post<PostResponse>('/write_note',
+      const res = await this.api.post<PostResponse>('/write_text_file',
         {
           file_path: note.filename,
           content: note.content

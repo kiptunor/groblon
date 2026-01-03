@@ -187,6 +187,61 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           header: cors_headers()
         }
       }
+      '/create_file' 
+      {
+        /*
+        future replacement for create_note and create_table
+        */
+        data := json.decode(CreateNoteRequest, req.data) or
+        {
+          http_log.error('failed to \x1b[38;5;45m/create_file\x1b[0m. Invalid JSON received')
+          err_resp := ErrorResponse
+          {
+            status: 'error'
+            error_description: 'Invalid JSON while attempting to create file'
+            expected_request:
+            {
+              'file_path': 'path/to/file.txt'
+            }
+            os_error: ''
+          }
+          return http.Response
+          {
+            status_code: 400
+            body: json.encode(err_resp)
+            header: cors_headers()
+          }
+        }
+
+        http_log.info('Creating file: $data.file_path')
+        groblon_core.create_note(data.file_path) or
+        {
+          http_log.error('failed to \x1b[38;5;45m/create_file\x1b[0m. Invalid JSON received')
+          err_resp := ErrorResponse
+          {
+            status: 'error'
+            error_description: 'Failed to create file'
+            os_error: '$err'
+          }
+          return http.Response
+          {
+            status_code: 400
+            body: json.encode(err_resp)
+            header: cors_headers()
+          }
+        }
+        resp := MinMsgResponse
+        {
+          status: 'ok'
+          msg: 'Note created: $data.file_path'
+        }
+          return http.Response
+          {
+            status_code: 200
+            body: json.encode(resp)
+            header: cors_headers()
+          }
+      }
       '/create_note' 
       {
         /*
@@ -351,14 +406,14 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           header: cors_headers()
         }
       }
-      '/write_note'
+      '/write_text_file'
       {
         /*
         Write / overwrite an entire file with the received contents
         */
         data := json.decode(SaveNoteRequest, req.data) or
         {
-          http_log.error('failed to \x1b[38;5;45m/write_note\x1b[0m. Invalid JSON received')
+          http_log.error('failed to \x1b[38;5;45m/write_text_file\x1b[0m. Invalid JSON received')
           
           err_res := ErrorResponse
           {
@@ -381,7 +436,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         
         // http_log.info('Writing note: $data')
         
-        http_log.info('Received request: \x1b[38;5;45m/write_note\x1b[0m')
+        http_log.info('Received request: \x1b[38;5;45m/write_text_file\x1b[0m')
         
         note := groblon_core.TextNote
         {
@@ -528,71 +583,6 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           table_data: tables
         }
         
-        return http.Response
-        {
-          status_code: 200
-          body: json.encode(resp)
-          header: cors_headers()
-        }
-      }
-      '/write_table'
-      {
-        /*
-        Write / overwrite an entire file with the received contents
-        */
-        data := json.decode(SaveTableRequest, req.data) or
-        {
-          http_log.error('failed to \x1b[38;5;45m/write_table\x1b[0m. Invalid JSON received')
-          
-          err_res := ErrorResponse
-          {
-            status: 'error'
-            error_description: 'Invalid JSON while writing table'
-            expected_request:
-            {
-              'file_path': 'path/to/file'
-              'content': 'csv string'
-            }
-          }
-          
-          return http.Response
-          {
-            status_code: 400
-            body: json.encode(err_res)
-            header: cors_headers()
-          }
-        }
-        
-        http_log.info('Received request: \x1b[38;5;45m/write_table\x1b[0m')
-        
-        table := groblon_core.TableFile
-        {
-          f_path_name: data.file_path
-          table_content: data.content
-        }
-        
-        groblon_core.save_table(table) or
-        {
-          err_res := ErrorResponse
-          {
-            status: 'error'
-            error_description: 'Failed to save table'
-            os_error: '$err'
-          }
-          
-          return http.Response
-          {
-            status_code: 500
-            body: json.encode(err_res)
-            header: cors_headers()
-          }
-        }
-        
-        resp := MinMsgResponse
-        {
-          status: 'ok'
-          msg: 'Saved table: $data.file_path'
-        }
         return http.Response
         {
           status_code: 200

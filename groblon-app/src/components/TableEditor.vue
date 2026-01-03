@@ -283,7 +283,7 @@ const TableEditorComponent = defineComponent({
                 rowHeaders: false,
               });
 
-              server.save_table({
+              server.save_text_file({
                 filename: current_file_path.value,
                 content: csvString
               })

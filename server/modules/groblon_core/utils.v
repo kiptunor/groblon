@@ -37,6 +37,21 @@ pub fn get_default_table_dir() string
   return full_path
 }
 
+pub fn get_default_code_dir() string
+{
+  home_dir := os.home_dir()
+  mut full_path := ""
+  if os.exists(home_dir + "/Documents") && os.is_dir(home_dir + "/Documents")
+  {
+    full_path = home_dir + "/Documents/My Code Storage"
+  }
+  else
+  {
+    log.error('"\x1b[38;5;142m${home_dir + "/Documents"}\x1b[0m" directory does NOT exist')
+  }
+  return full_path
+}
+
 pub fn get_config_dir() string
 {
   home_dir := os.home_dir()
@@ -74,6 +89,15 @@ pub fn setup()
     os.mkdir(get_default_table_dir()) or 
     {
       log.error('Error creating default table directory: $err')
+    }
+  }
+  
+  if !os.exists(get_default_code_dir())
+  {
+    log.debug('Creating default code storage directory...')
+    os.mkdir(get_default_code_dir()) or 
+    {
+      log.error('Error creating default code storage directory: $err')
     }
   }
 }
