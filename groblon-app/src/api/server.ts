@@ -25,6 +25,16 @@ type Note = {
   content: string
 }
 
+type TextFile = {
+  filename: string
+  content: string
+}
+
+type Pastebin = {
+  filename: string
+  content: string
+}
+
 type Table = {
   filename: string
   content: string
@@ -149,6 +159,30 @@ export class GroblonServer {
         content: table.content
       })
       console.log(res)
+      return res.data
+    }
+    catch (err) {
+      console.error('Request failed:', err)
+      return null
+    }
+  }
+  
+  async pastebin_create_file(name: string): Promise<PostResponse> {
+    try {
+      const res = await this.api.post<PostResponse>('/pastebin_create_file', { 
+        file_path: name 
+      })
+      return res.data
+    }
+    catch (err) {
+      console.error('Request failed:', err)
+      return null
+    }
+  }
+  
+  async get_pastebin_list(): Promise<PostResponse> {
+    try {
+      const res = await this.api.post<PostResponse>('/get_pastebin_list', {})
       return res.data
     }
     catch (err) {

@@ -37,13 +37,13 @@ pub fn get_default_table_dir() string
   return full_path
 }
 
-pub fn get_default_code_dir() string
+pub fn get_default_pastebin_dir() string
 {
   home_dir := os.home_dir()
   mut full_path := ""
   if os.exists(home_dir + "/Documents") && os.is_dir(home_dir + "/Documents")
   {
-    full_path = home_dir + "/Documents/My Code Storage"
+    full_path = home_dir + "/Documents/My pastebins"
   }
   else
   {
@@ -92,12 +92,12 @@ pub fn setup()
     }
   }
   
-  if !os.exists(get_default_code_dir())
+  if !os.exists(get_default_pastebin_dir())
   {
-    log.debug('Creating default code storage directory...')
-    os.mkdir(get_default_code_dir()) or 
+    log.debug('Creating default pastebin directory...')
+    os.mkdir(get_default_pastebin_dir()) or 
     {
-      log.error('Error creating default code storage directory: $err')
+      log.error('Error creating default pastebin directory: $err')
     }
   }
 }

@@ -14,6 +14,7 @@ declare module 'vue' {
     CodeStorage: typeof import('./components/CodeStorage.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     MediaAccess: typeof import('./components/MediaAccess.vue')['default']
+    Pastebin: typeof import('./components/Pastebin.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Settings: typeof import('./components/Settings.vue')['default']

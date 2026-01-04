@@ -56,6 +56,30 @@
                       <v-list-item-title>{{ item.file_path.split('/').pop() }}</v-list-item-title>
                     </v-list-item>
                   </v-list-group>
+                  
+                  <v-list-group color="primary" value="pastebin">
+                    <template #activator="{ props }">
+                      <v-list-item
+                        class="mb-2"
+                        color="primary"
+                        v-bind="props"
+                        prepend-icon="mdi-file-code"
+                        rounded="lg"
+                        title="Pastebin"
+                      ></v-list-item>
+                    </template>
+                    
+                    <v-list-item
+                      v-for="item in pastebin_list"
+                      :key="item.value"
+                      class="mb-2"
+                      :prepend-icon="item.icon"
+                      rounded="lg"
+                      :value="item.file_path"
+                    >
+                      <v-list-item-title>{{ item.file_path.split('/').pop() }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list-group>
   
                   <v-list-item
                     class="mb-2"
@@ -69,19 +93,6 @@
                     </template>
                     <v-list-item-title>Media Access</v-list-item-title>
                   </v-list-item>
-                  
-                  <v-list-group color="primary" value="code-storage">
-                    <template #activator="{ props }">
-                      <v-list-item
-                        class="mb-2"
-                        color="primary"
-                        v-bind="props"
-                        prepend-icon="mdi-file-code"
-                        rounded="lg"
-                        title="Code Storage"
-                      ></v-list-item>
-                    </template>
-                  </v-list-group>
   
                   <v-list-item
                     class="mb-2"
@@ -114,14 +125,15 @@
 <script setup lang="ts">
   import { computed, onMounted, ref, shallowRef, watch } from 'vue'
   import { registerAllModules } from 'handsontable/registry';
-  import { useUI, useNotesStore, useTablesStore } from '@/stores/ui'
+  import { useUI, useNotesStore, useTablesStore, usePastebinStore } from '@/stores/ui'
   import { textEditorControl } from '@/stores/TextEditor'
   import MediaAccess from './MediaAccess.vue'
   import Settings from './Settings.vue'
   import TextEditor from './TextEditor.vue'
   import TableEditor from './TableEditor.vue'
-  import CodeStorage from './CodeStorage.vue'
+  import Pastebin from './Pastebin.vue'
   import { useTableCtrl } from '@/stores/TableEditor'
+  import { monacoControl } from '@/stores/Pastebin';
 
   import { server } from '../api/server'
 
@@ -137,6 +149,11 @@
     file_path: string
     content: string
   }
+  
+  interface Pastebin {
+    file_path: string
+    content: string
+  }
 
 
   type GroupItem = {
@@ -149,7 +166,9 @@
   const text_editor_ctrl = textEditorControl()
   const notesStore = useNotesStore()
   const tablesStore = useTablesStore()
+  const pastebinStore = usePastebinStore()
   const tableCtrl = useTableCtrl()
+  const monacoCtrl = monacoControl();
 
   /*
   - - - - Server Interaction - - - -
@@ -170,6 +189,7 @@
 
     notesStore.fetchNotes()
     tablesStore.fetchTables()
+    pastebinStore.fetchFiles()
   })
 
   
@@ -243,6 +263,49 @@
       tableCtrl.setEmptyTable()
     }
   })
+  
+  
+  const pastebin_list = ref<Table[]>([])
+  const pastebin_titles = ref<GroupItem[]>([])
+  
+  watch(
+    () => pastebinStore.pb_files,
+    (newPastebins) => {
+      if (!newPastebins) return
+      pastebin_list.value = newPastebins
+      pastebin_titles.value = newPastebins.map(pastebin => ({
+        title: pastebin.file_path.split('/').pop() ?? pastebin.file_path,
+        icon: 'mdi-text-box',
+        value: pastebin.file_path
+      }))
+    },
+    { immediate: true }
+  )
+  
+  const selectedPastebinPath = computed(() => {
+    const val = ui.selected[0]
+    return typeof val === 'string' ? val : null
+  })
+  
+  const selectedPastebin = computed(() => {
+    if (!selectedPastebinPath.value) return null
+    return pastebin_list.value.find(n => n.file_path === selectedPastebinPath.value) ?? null
+  })
+  
+  watch(selectedPastebin, (pastebin) => {
+    if (!pastebin) return
+    const text_content = pastebin.content
+    if (text_content) {
+      //tableCtrl.loadCsv(csv_string)
+      //console.log('Push text to monaco')
+      monacoCtrl.pushText(text_content)
+    }
+    else {
+      //tableCtrl.setEmptyTable()
+      monacoCtrl.setEmptyContent()
+      //console.log('No text content available')
+    }
+  })
 
   /*
   - - - - Sidebar Functionality - - - -
@@ -253,8 +316,8 @@
       return TextEditor
     if (ui.opened.includes('tables'))
       return TableEditor
-    if (ui.opened.includes('code-storage'))
-       return CodeStorage  
+    if (ui.opened.includes('pastebin'))
+       return Pastebin
     if (ui.selected.includes('media-access'))
       return MediaAccess
     if (ui.selected.includes('settings'))

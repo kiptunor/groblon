@@ -24,6 +24,13 @@ Current feature plans:
         - [ ] Cell Formatting
         - [X] Colum Header Rename
         - [ ] Colum types setting
+    - 🔽 Pastebin
+          - [X] Pastebin Creation
+          - [X] Pastebin Deletion
+          - [X] Pastebin Content Retrieval
+          - [X] Pastebin code saver (autosave)
+          - [ ] Language autorecognition
+          - [ ] Syntax highlighting for more languages
     - [X] Note creation
     - [X] Note deletion
     - [X] Note content retrieval

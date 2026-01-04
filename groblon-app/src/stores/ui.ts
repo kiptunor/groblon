@@ -79,3 +79,29 @@ export const useTablesStore = defineStore('tables', () => {
     fetchTables,
   }
 })
+
+export const usePastebinStore = defineStore('pastebin-store', () => {
+  // reactive array for notes
+  const pb_files = ref<Pastebin[]>([])
+  const loading = ref(false)
+
+  // fetch notes from server
+  async function fetchFiles() {
+    loading.value = true
+    try {
+      const res = await server.get_pastebin_list()
+      // assuming res.data is the array of notes
+      pb_files.value = res.pastebins
+    } catch (err) {
+      console.error('Failed to fetch notes:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return {
+    pb_files,
+    loading,
+    fetchFiles,
+  }
+})

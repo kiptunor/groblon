@@ -76,6 +76,13 @@ struct GetNotesResponse
   notes  []NoteJson // Again...
 }
 
+struct GetPastebinsResponse
+{
+  status string
+  msg    string
+  pastebins []PastebinJson
+}
+
 struct ErrorResponse
 {
   status            string
@@ -90,6 +97,13 @@ pub struct NoteJson
   pub:
     file_path string
     content  string
+}
+
+pub struct PastebinJson
+{
+  pub:
+    file_path string
+    content string
 }
 
 pub struct TableJson
@@ -111,6 +125,55 @@ fn notes_to_json(notes []groblon_core.TextNote) []NoteJson
     {
       file_path: note.f_path_name
       content:  note.text_content
+    }
+  }
+
+  return out
+}
+
+fn raw_files2_json_notes(files []groblon_core.TextFile) []NoteJson
+{
+  mut out := []NoteJson{}
+
+  for file in files
+  {
+    out << NoteJson
+    {
+      file_path: file.f_path_name
+      content:  file.text_content
+    }
+  }
+
+  return out
+}
+
+fn raw_files2_json_tables(files []groblon_core.TextFile) []TableJson
+{
+  mut out := []TableJson{}
+
+  for file in files
+  {
+    out << TableJson
+    {
+      file_path: file.f_path_name
+      content:  file.text_content
+      type: '' // Empty for now
+    }
+  }
+
+  return out
+}
+
+fn raw_files2_json_pastebins(files []groblon_core.TextFile) []PastebinJson
+{
+  mut out := []PastebinJson{}
+
+  for file in files
+  {
+    out << PastebinJson
+    {
+      file_path: file.f_path_name
+      content:  file.text_content
     }
   }
 
@@ -371,7 +434,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         http_log.info("Received request: \x1b[38;5;45m/get_note_contents\x1b[0m")
         
         // Use default note directory for now
-        raw_notes := groblon_core.get_notes(groblon_core.get_default_note_dir()) or
+        raw_notes := groblon_core.get_text_file_contents(groblon_core.get_default_note_dir()) or
         {
           http_log.error('failed to \x1b[38;5;45m/get_note_contents\x1b[0m. $err')
           
@@ -390,7 +453,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           }
         }
         
-        json_notes := notes_to_json(raw_notes)
+        json_notes := raw_files2_json_notes(raw_notes)
         
         resp := GetNotesResponse
         {
@@ -604,6 +667,97 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           status: 'ok'
           msg: 'Passing server settings'
           // data: 'Json struct' // Todo
+        }
+        
+        return http.Response
+        {
+          status_code: 200
+          body: json.encode(resp)
+          header: cors_headers()
+        }
+      }
+      '/pastebin_create_file' 
+      {
+        data := json.decode(CreateNoteRequest, req.data) or
+        {
+          http_log.error('failed to \x1b[38;5;45m/pastebin_create_file\x1b[0m. Invalid JSON received')
+          err_resp := ErrorResponse
+          {
+            status: 'error'
+            error_description: 'Invalid JSON while attempting to create pastebin file'
+            expected_request:
+            {
+              'file_path': 'path/to/file.txt'
+            }
+            os_error: ''
+          }
+          return http.Response
+          {
+            status_code: 400
+            body: json.encode(err_resp)
+            header: cors_headers()
+          }
+        }
+
+        http_log.info('Creating note: $data.file_path')
+        groblon_core.create_file(groblon_core.get_default_pastebin_dir() + "/" + data.file_path) or
+        {
+          http_log.error('failed to \x1b[38;5;45m/pastebin_create_file\x1b[0m. Invalid JSON received')
+          err_resp := ErrorResponse
+          {
+            status: 'error'
+            error_description: 'Failed to create pastebin file'
+            os_error: '$err'
+          }
+          return http.Response
+          {
+            status_code: 400
+            body: json.encode(err_resp)
+            header: cors_headers()
+          }
+        }
+        resp := MinMsgResponse
+        {
+          status: 'ok'
+          msg: 'Pastebin file created: $data.file_path'
+        }
+          return http.Response
+          {
+            status_code: 200
+            body: json.encode(resp)
+            header: cors_headers()
+          }
+      }
+      '/get_pastebin_list'
+      {
+        http_log.info("Received request: \x1b[38;5;45m/get_pastebin_list\x1b[0m")
+        
+        raw_files := groblon_core.get_text_file_contents(groblon_core.get_default_pastebin_dir()) or
+        {
+          http_log.error('failed to \x1b[38;5;45m/get_pastebin_list\x1b[0m. $err')
+          
+          err_res := ErrorResponse
+          {
+            status: 'error'
+            error_description: 'Failed to read pastebin directory'
+            os_error: '$err'
+          }
+          
+          return http.Response
+          {
+            status_code: 400
+            body: json.encode(err_res)
+            header: cors_headers()
+          }
+        }
+        
+        json_pastebins := raw_files2_json_pastebins(raw_files)
+        
+        resp := GetPastebinsResponse
+        {
+          status: 'ok'
+          msg: 'Operation successful'
+          pastebins: json_pastebins
         }
         
         return http.Response
