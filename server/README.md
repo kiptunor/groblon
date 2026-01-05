@@ -121,7 +121,7 @@ JSON Structure:
 > 
 > This happens because of how [HandsOnTable](https://github.com/handsontable/handsontable) exports CSV string
 
-`/create_note`
+`/create_note`  
 `/create_pastebin`
 Creates a an empty file at the specified path.  
 JSON Structure:
