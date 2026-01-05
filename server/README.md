@@ -99,7 +99,7 @@ JSON Structure:
 ```
 
 `/delete_file`
-Also a common http request for deleting, notes, tables and pastebins (Source files).
+Also a common http request for deleting, notes, tables and pastebins (Source files).\n
 JSON Structure:
 ```json
 {
