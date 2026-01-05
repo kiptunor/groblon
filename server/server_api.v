@@ -65,14 +65,14 @@ struct GetTablesResponse
 {
   status string
   msg    string
-  table_data []TableJson
+  table_list []TableJson
 }
 
 struct GetNotesResponse
 {
   status string
   msg    string
-  notes  []NoteJson
+  note_list  []NoteJson
 }
 
 struct GetPastebinsResponse
@@ -380,7 +380,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         {
           status: 'ok'
           msg: 'Operation successful'
-          notes: json_notes
+          note_list: json_notes
         }
         
         return http.Response
@@ -534,7 +534,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
         {
           status: 'ok'
           msg: 'Operation successful'
-          table_data: tables
+          table_list: tables
         }
         
         return http.Response

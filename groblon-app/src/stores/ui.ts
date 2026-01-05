@@ -39,7 +39,7 @@ export const useNotesStore = defineStore('notes', () => {
     try {
       const res = await server.get_notes()
       // assuming res.data is the array of notes
-      notes.value = res.notes
+      notes.value = res.note_list
     } catch (err) {
       console.error('Failed to fetch notes:', err)
     } finally {
@@ -65,7 +65,7 @@ export const useTablesStore = defineStore('tables', () => {
     try {
       const res = await server.get_tables()
       // assuming res.data is the array of notes
-      tables.value = res.table_data
+      tables.value = res.table_list
     } catch (err) {
       console.error('Failed to fetch notes:', err)
     } finally {
