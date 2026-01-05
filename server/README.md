@@ -8,7 +8,7 @@ This is where I'll learn the V programing language lol
 The server allows http requests only trough POST method.
 
 ## Endpoints
-The API uses JSON format for requests and responses.
+The API uses JSON format for requests and responses. 
 All JSON keys **must follow the snake_case naming convention**.
 
 ### POST
