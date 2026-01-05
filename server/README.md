@@ -20,6 +20,7 @@ All JSON keys **must follow the snake_case naming convention**.
 `/get_note_list`
 Reads trough all provided directories and returns a JSON object array containing the full path to each note file along with the text content.
 ```json
+Returned JSON:
 {
   "status": "ok",
   "msg": "Operation successful",
@@ -44,6 +45,7 @@ This request only works with text based table formats:
 
 Same as getting the notes. The only difference is that it returns an additional key `type`.
 At the moment the `type` key is empty
+Returned JSON:
 ```json
 {
   "status": "ok",
@@ -67,6 +69,7 @@ At the moment the `type` key is empty
 
 Once again, same way as getting the notes but for pastebins (source files)
 ```json
+Returned JSON:
 {
   "status": "ok",
   "msg": "Operation successful",
@@ -105,15 +108,15 @@ JSON Structure:
 ```
 
 
-### Table save
-At the moment table saving is done trough CSV
-From the web application each created table has 50 rows and 50 columns.
-Each CSV cell is written **even when empty**. So the resulted CSV content looks like this:
-```
-Cell value1,Cell value2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-On rows,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-```
-
-This happens because of how (HandsOnTable)[https://github.com/handsontable/handsontable] exports CSV string
+> [!NOTE]
+> At the moment table saving is done trough CSV
+> From the web application each table created has 50 rows and 50 columns by default.
+> Each CSV cell is still written **even when empty**. So the resulted CSV content looks like this:
+> ```
+> Cell value1,Cell value2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+> On rows,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+> ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+> ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+> ```
+> 
+> This happens because of how (HandsOnTable)[https://github.com/handsontable/handsontable] exports CSV string
