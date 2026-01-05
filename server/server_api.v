@@ -3,7 +3,6 @@ module main
 import net.http
 import json
 import log
-//import groblon_utils
 import groblon_core
 
 
@@ -66,14 +65,14 @@ struct GetTablesResponse
 {
   status string
   msg    string
-  table_data []TableJson // Why am I exposing the core API on the http server
+  table_data []TableJson
 }
 
 struct GetNotesResponse
 {
   status string
   msg    string
-  notes  []NoteJson // Again...
+  notes  []NoteJson
 }
 
 struct GetPastebinsResponse
@@ -114,22 +113,6 @@ pub struct TableJson
     type      string
 }
 
-
-fn notes_to_json(notes []groblon_core.TextNote) []NoteJson
-{
-  mut out := []NoteJson{}
-
-  for note in notes
-  {
-    out << NoteJson
-    {
-      file_path: note.f_path_name
-      content:  note.text_content
-    }
-  }
-
-  return out
-}
 
 fn raw_files2_json_notes(files []groblon_core.TextFile) []NoteJson
 {
@@ -250,70 +233,8 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           header: cors_headers()
         }
       }
-      '/create_file' 
-      {
-        /*
-        future replacement for create_note and create_table
-        */
-        data := json.decode(CreateNoteRequest, req.data) or
-        {
-          http_log.error('failed to \x1b[38;5;45m/create_file\x1b[0m. Invalid JSON received')
-          err_resp := ErrorResponse
-          {
-            status: 'error'
-            error_description: 'Invalid JSON while attempting to create file'
-            expected_request:
-            {
-              'file_path': 'path/to/file.txt'
-            }
-            os_error: ''
-          }
-          return http.Response
-          {
-            status_code: 400
-            body: json.encode(err_resp)
-            header: cors_headers()
-          }
-        }
-
-        http_log.info('Creating file: $data.file_path')
-        groblon_core.create_note(data.file_path) or
-        {
-          http_log.error('failed to \x1b[38;5;45m/create_file\x1b[0m. Invalid JSON received')
-          err_resp := ErrorResponse
-          {
-            status: 'error'
-            error_description: 'Failed to create file'
-            os_error: '$err'
-          }
-          return http.Response
-          {
-            status_code: 400
-            body: json.encode(err_resp)
-            header: cors_headers()
-          }
-        }
-        resp := MinMsgResponse
-        {
-          status: 'ok'
-          msg: 'Note created: $data.file_path'
-        }
-          return http.Response
-          {
-            status_code: 200
-            body: json.encode(resp)
-            header: cors_headers()
-          }
-      }
       '/create_note' 
       {
-        /*
-        Create a new note (creating a new empty file)
-        Todo: Return error if:
-        - Name is empty
-        - Note already exists
-        - It fails to create the file
-        */
         data := json.decode(CreateNoteRequest, req.data) or
         {
           http_log.error('failed to \x1b[38;5;45m/create_note\x1b[0m. Invalid JSON received')
@@ -423,7 +344,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           header: cors_headers()
         }
       }
-      '/get_note_contents'
+      '/get_note_list'
       {
         /*
         Return JSON object array of each note existing in /home/<user>/Documents/MyNotes
@@ -536,36 +457,6 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           header: cors_headers()
         }
       }
-      '/append_note'
-      {
-        /*
-        Append the new text lines to an existing text file
-        */
-        
-        data := json.decode(MsgRequest, req.data) or
-        {
-          http_log.error('failed to \x1b[38;5;45m/append_note\x1b[0m. Invalid JSON received')
-          return http.Response
-          {
-            status_code: 400
-            body: '{"status":"error","msg":"Invalid JSON while appending note"}'
-            header: cors_headers()
-          }
-        }
-        
-        http_log.info('Appending note: $data.msg')
-        resp := MinMsgResponse
-        {
-          status: 'ok'
-          msg: 'Received content: $data.msg'
-        }
-        return http.Response
-        {
-          status_code: 200
-          body: json.encode(resp)
-          header: cors_headers()
-        }
-      }
       '/create_table' 
       {
         /*
@@ -606,7 +497,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           header: cors_headers()
         }
       }
-      '/get_table_contents'
+      '/get_table_list'
       {
         /*
         Return JSON object array of each note existing in /home/<user>/Documents/MyNotes
@@ -653,30 +544,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           header: cors_headers()
         }
       }
-      '/get_server_settings'
-      {
-        /*
-        Get the server settings (Locally stored)
-        */
-        
-        println("Request: $req")
-        
-        // Todo: JSON struct required
-        resp := MsgResponse
-        {
-          status: 'ok'
-          msg: 'Passing server settings'
-          // data: 'Json struct' // Todo
-        }
-        
-        return http.Response
-        {
-          status_code: 200
-          body: json.encode(resp)
-          header: cors_headers()
-        }
-      }
-      '/pastebin_create_file' 
+      '/create_pastebin'
       {
         data := json.decode(CreateNoteRequest, req.data) or
         {
@@ -699,7 +567,7 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           }
         }
 
-        http_log.info('Creating note: $data.file_path')
+        http_log.info('Creating pastebin: $data.file_path')
         groblon_core.create_file(groblon_core.get_default_pastebin_dir() + "/" + data.file_path) or
         {
           http_log.error('failed to \x1b[38;5;45m/pastebin_create_file\x1b[0m. Invalid JSON received')
@@ -767,7 +635,30 @@ pub fn(mut h HttpHandler) handle(req http.Request) http.Response
           header: cors_headers()
         }
       }
-      '/save_server_settings'
+      '/get_settings'
+      {
+        /*
+        Get the server settings (Locally stored)
+        */
+        
+        println("Request: $req")
+        
+        // Todo: JSON struct required
+        resp := MsgResponse
+        {
+          status: 'ok'
+          msg: 'Passing server settings'
+          // data: 'Json struct' // Todo
+        }
+        
+        return http.Response
+        {
+          status_code: 200
+          body: json.encode(resp)
+          header: cors_headers()
+        }
+      }
+      '/save_settings'
       {
         /*
         Save server settings

@@ -91,7 +91,7 @@ export class GroblonServer {
 
   async get_notes(): Promise<PostResponse> {
     try {
-      const res = await this.api.post<PostResponse>('/get_note_contents', {})
+      const res = await this.api.post<PostResponse>('/get_note_list', {})
       return res.data
     }
     catch (err) {
@@ -131,7 +131,7 @@ export class GroblonServer {
   
   async get_tables(): Promise<PostResponse> {
     try {
-      const res = await this.api.post<PostResponse>('/get_table_contents', {})
+      const res = await this.api.post<PostResponse>('/get_table_list', {})
       return res.data
     }
     catch (err) {
@@ -167,9 +167,9 @@ export class GroblonServer {
     }
   }
   
-  async pastebin_create_file(name: string): Promise<PostResponse> {
+  async create_pastebin(name: string): Promise<PostResponse> {
     try {
-      const res = await this.api.post<PostResponse>('/pastebin_create_file', { 
+      const res = await this.api.post<PostResponse>('/create_pastebin', { 
         file_path: name 
       })
       return res.data

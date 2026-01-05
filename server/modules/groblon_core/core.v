@@ -6,42 +6,26 @@ import encoding.csv
 
 
 
-enum NoteType as u8
-{
-  plain    // Simple text note
-  markdown // Markdown formatted text note
-  table     // CSV formatted table note
-}
 
 enum TableType as u8
 {
-  csv
   json
+  csv
+  tsv
+  xlsx
 }
 
 pub struct TextNote
 {
   pub:
     f_path_name string @[required] // The file path and the name
-    //mut color := Color
     text_content string
 }
-
-/*
-pub struct pastebinFile
-{
-  pub:
-    f_path_name string @[required] // The file path and the name
-    //mut color := Color
-    text_content string
-}
-*/
 
 pub struct TableFile
 {
   pub:
     f_path_name string @[required] // The file path and the name
-    //mut color := Color
     table_content string
     table_type TableType
 }
@@ -75,29 +59,6 @@ pub fn create_file(f string)!
   os.write_file(f, '')!
 }
 
-pub fn get_notes(dir_path string) ![]TextNote
-{
-  mut notes := []TextNote{}
-  
-  entries := os.ls(dir_path)!
-  
-    for entry in entries
-    {
-      full_path := os.join_path(dir_path, entry)
-  
-      if os.is_file(full_path)
-      {
-        notes << TextNote
-        {
-          f_path_name: full_path
-          text_content: os.read_file(full_path) or { '' }
-        }
-      }
-    }
-  
-  return notes
-}
-
 pub fn save_note(note TextNote)!
 {
   os.write_file(note.f_path_name, note.text_content)!
@@ -118,15 +79,9 @@ pub fn delete_file(file_path string)!
   os.rm(file_path)!
 }
 
-pub fn get_note_info(note TextNote)
-{
-  //Todo (Requires a struct)
-}
-
 pub fn create_table(n string)
 {
   // Only CSV is currently supported
-  
   
   if !os.exists(n + '.csv')
   {
@@ -146,51 +101,22 @@ pub fn get_tables(dir_path string) ![]TableFile
   
   entries := os.ls(dir_path)!
   
-    for entry in entries
-    {
-      full_path := os.join_path(dir_path, entry)
-  
-      if os.is_file(full_path)
-      {
-        //println('full_path: ${full_path}')
-        tables << TableFile
-        {
-          f_path_name: full_path
-          //text_content: os.read_file(full_path) or { '' } // Todo: Read the file content
-          table_content: os.read_file(full_path) or { '' }
-        }
-      }
-    }
-  
-  return tables
-}
+  for entry in entries
+  {
+    full_path := os.join_path(dir_path, entry)
 
-/*
-pub fn get_pastebins(dir_path string) ![]pastebinFile
-{
-  mut pastebins := []pastebinFile{}
-  
-  entries := os.ls(dir_path)!
-  
-    for entry in entries
+    if os.is_file(full_path)
     {
-      full_path := os.join_path(dir_path, entry)
-  
-      if os.is_file(full_path)
+      tables << TableFile
       {
-        //println('full_path: ${full_path}')
-        pastebins << TableFile
-        {
-          f_path_name: full_path
-          //text_content: os.read_file(full_path) or { '' } // Todo: Read the file content
-          table_content: os.read_file(full_path) or { '' }
-        }
+        f_path_name: full_path
+        table_content: os.read_file(full_path) or { '' }
       }
     }
+  }
   
   return tables
 }
-*/
 
 pub fn get_text_file_contents(dir_path string) ![]TextFile
 {
@@ -204,20 +130,13 @@ pub fn get_text_file_contents(dir_path string) ![]TextFile
 
     if os.is_file(full_path)
     {
-      //println('full_path: ${full_path}')
       text_files << TextFile
       {
         f_path_name: full_path
-        //text_content: os.read_file(full_path) or { '' } // Todo: Read the file content
         text_content: os.read_file(full_path) or { '' }
       }
     }
   }
   
   return text_files
-}
-
-pub fn save_table(table TableFile)!
-{
-  os.write_file(table.f_path_name, table.table_content)!
 }

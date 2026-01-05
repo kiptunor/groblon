@@ -175,7 +175,7 @@ function onDialAction(item, index) {
 
 function createPastebin() {
   pastebinDialog.value = false
-  server.pastebin_create_file(pastebinName.value)
+  server.create_pastebin(pastebinName.value)
 
   pasteBin.fetchFiles()
 }
