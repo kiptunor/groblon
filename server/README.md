@@ -90,7 +90,7 @@ Returned JSON:
 
 `/write_text_file`
 This request is common for saving notes, tables in text formats, and pastebins
-JSON Sstructure:
+JSON Structure:
 ```json
 {
   "file_path": "path/to/text_file.txt",
@@ -121,4 +121,4 @@ JSON Structure:
 > ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 > ```
 > 
-> This happens because of how (HandsOnTable)[https://github.com/handsontable/handsontable] exports CSV string
+> This happens because of how [HandsOnTable](https://github.com/handsontable/handsontable) exports CSV string
