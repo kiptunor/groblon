@@ -29,7 +29,7 @@ Current feature plans:
         - [X] Pastebin Deletion
         - [X] Pastebin Content Retrieval
         - [X] Pastebin code saver (autosave)
-        - [ ] Language autorecognition
+        - [X] Language autorecognition
         - [ ] Syntax highlighting for more languages
     - [X] Note creation
     - [X] Note deletion

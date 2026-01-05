@@ -32,9 +32,11 @@
       ></v-btn>
     </v-toolbar>
       <CodeEditor
+        :key="current_file_path"
         v-model:value="monacoCtrl.code"
-        :language="lang"
+        :language="computedLang"
         :theme="theme"
+        :path="current_file_path"
         :height="850"
         :lifecycle="lifecycleHooks"
         @error="handleError"
@@ -87,11 +89,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, watch } from 'vue';
+import { ref, shallowRef, watch, computed, nextTick } from 'vue';
 import { CodeEditor, type EditorLifecycleHooks, type EditorError } from 'monaco-editor-vue3';
+// import * as monaco from 'monaco-editor'
 import { server } from '../api/server'
 import { useUI, usePastebinStore } from '@/stores/ui';
 import { monacoControl } from '@/stores/Pastebin';
+import { debounce } from 'lodash'
 
 
 
@@ -105,12 +109,29 @@ const ui = useUI()
 const monacoCtrl = monacoControl()
 
 
+
+
+
 const pastebinDialog = shallowRef(false)
 const pastebinName = ref('')
 
-
+const langMap: Record<string, string> = {
+  js: 'javascript',
+  ts: 'typescript',
+  cpp: 'cpp',
+  c: 'c',
+  h: 'c',
+  hpp: 'cpp',
+  py: 'python',
+  json: 'json',
+  html: 'html',
+  css: 'css',
+  cs: 'csharp',
+  java: 'java',
+}
 
 const current_file_path = ref<string | null>(null)
+const editorRef = ref<InstanceType<typeof CodeEditor> | null>(null)
 
 watch(
   () => ui.selected,
@@ -123,6 +144,11 @@ watch(
   { immediate: true }
 )
 
+const computedLang = computed(() => {
+  console.log('computedLang called')
+  const ext = current_file_path.value?.split('.').pop()?.toLowerCase()
+  return ext && langMap[ext] ? langMap[ext] : 'plaintext'
+})
 
 const dialActions = [
   { color: 'info-darken-1', icon: 'mdi-plus', tooltip: 'Create pastebin' },
@@ -156,7 +182,8 @@ function createPastebin() {
 
 
 // Monaco stuff
-const lang = ref('cpp')
+
+
 const theme = ref('vs-dark')
 
 
@@ -171,7 +198,8 @@ const lifecycleHooks: EditorLifecycleHooks = {
     console.log('Editor will be created...');
   },
   onCreated: (editor) => {
-    //console.log('Editor created:', editor);
+  
+    editorRef.value = editor
     
     // Autosave logic
     let timeout: number
