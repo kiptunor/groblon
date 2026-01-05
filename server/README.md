@@ -109,10 +109,8 @@ JSON Structure:
 
 
 > [!NOTE]
-> At the moment table saving is done trough CSV
-> 
+> At the moment table saving is done trough CSV.
 > From the web application each table created has 50 rows and 50 columns by default.
-> 
 > Each CSV cell is still written **even when empty**. So the resulted CSV content looks like this:
 > ```
 > Cell value1,Cell value2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
