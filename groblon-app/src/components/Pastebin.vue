@@ -128,6 +128,8 @@ const langMap: Record<string, string> = {
   css: 'css',
   cs: 'csharp',
   java: 'java',
+  ini: 'ini',
+  toml: 'toml' // Not default
 }
 
 const current_file_path = ref<string | null>(null)
@@ -166,6 +168,7 @@ function onDialAction(item, index) {
   }
   if (item.icon === 'mdi-minus') {
     server.delete_file(current_file_path.value)
+    monacoCtrl.setEmptyContent()
     pasteBin.fetchFiles()
   }
   if (item.icon === 'mdi-refresh') {
@@ -176,7 +179,6 @@ function onDialAction(item, index) {
 function createPastebin() {
   pastebinDialog.value = false
   server.create_pastebin(pastebinName.value)
-
   pasteBin.fetchFiles()
 }
 
