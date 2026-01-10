@@ -32,6 +32,19 @@
                     </v-list-item>
                   </v-list-group>
                   
+                  <v-list-group color="primary" value="flatbox">
+                    <template #activator="{ props }">
+                      <v-list-item
+                        class="mb-2"
+                        color="primary"
+                        v-bind="props"
+                        prepend-icon="mdi-list-box-outline"
+                        rounded="lg"
+                        title="Flatbox"
+                      ></v-list-item>
+                    </template>
+                  </v-list-group>
+                  
                   <v-list-group color="primary" value="tables">
                     <template #activator="{ props }">
                       <v-list-item
@@ -132,6 +145,7 @@
   import TextEditor from './TextEditor.vue'
   import TableEditor from './TableEditor.vue'
   import Pastebin from './Pastebin.vue'
+  import Flatbox from './Flatbox.vue'
   import { useTableCtrl } from '@/stores/TableEditor'
   import { monacoControl } from '@/stores/Pastebin';
 
@@ -314,6 +328,8 @@
   const currentComponent = computed(() => {
     if (ui.opened.includes('notes'))
       return TextEditor
+    if (ui.opened.includes('flatbox'))
+      return Flatbox
     if (ui.opened.includes('tables'))
       return TableEditor
     if (ui.opened.includes('pastebin'))

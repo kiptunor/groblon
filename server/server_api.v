@@ -113,6 +113,21 @@ pub struct TableJson
     type      string
 }
 
+pub struct FlatboxItemJson
+{
+  pub:
+    text_content string
+    url          string
+}
+
+pub struct GetFlatboxList
+{
+  pub:
+    status string
+    msg string  
+    flatbox_list []FlatboxItemJson
+}
+
 
 fn raw_files2_json_notes(files []groblon_core.TextFile) []NoteJson
 {

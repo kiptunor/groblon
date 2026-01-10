@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CodeStorage: typeof import('./components/CodeStorage.vue')['default']
+    Flatbox: typeof import('./components/Flatbox.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     MediaAccess: typeof import('./components/MediaAccess.vue')['default']
     Pastebin: typeof import('./components/Pastebin.vue')['default']
